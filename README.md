@@ -1,3 +1,4 @@
+
 # Adeel & Brother Cement — Business Management App
 
 A .NET + React application for managing daily sales, inventory, expenses, and profit for a Cement & Sirya agency.
@@ -60,3 +61,6 @@ No business logic changes needed — only the data layer.
 ## Default Product Prices
 
 Sample buy/sell prices are pre-seeded. Update them in **Inventory** page with your actual rates.
+# Adeel-Brother-Cement-Management-System
+A modern full-stack Cement Shop Management System built with ASP.NET Core (.NET 8) and React for inventory, sales, customer management, expenses, payments, and business analytics.
+
