@@ -1,0 +1,30 @@
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\bin\Debug\net8.0\AdeelBrotherCement.Application.deps.json
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\bin\Debug\net8.0\AdeelBrotherCement.Application.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\bin\Debug\net8.0\AdeelBrotherCement.Application.pdb
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\bin\Debug\net8.0\AdeelBrotherCement.Domain.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\bin\Debug\net8.0\AdeelBrotherCement.Domain.pdb
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.csproj.AssemblyReference.cache
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.AssemblyInfoInputs.cache
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.AssemblyInfo.cs
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.csproj.CoreCompileInputs.cache
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBro.29CB4006.Up2Date
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\refint\AdeelBrotherCement.Application.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.pdb
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\ref\AdeelBrotherCement.Application.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\bin\Debug\net8.0\AdeelBrotherCement.Application.deps.json
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\bin\Debug\net8.0\AdeelBrotherCement.Application.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\bin\Debug\net8.0\AdeelBrotherCement.Application.pdb
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\bin\Debug\net8.0\AdeelBrotherCement.Domain.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\bin\Debug\net8.0\AdeelBrotherCement.Domain.pdb
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.csproj.AssemblyReference.cache
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.AssemblyInfoInputs.cache
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.AssemblyInfo.cs
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.csproj.CoreCompileInputs.cache
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBro.29CB4006.Up2Date
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\refint\AdeelBrotherCement.Application.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\AdeelBrotherCement.Application.pdb
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Application\obj\Debug\net8.0\ref\AdeelBrotherCement.Application.dll

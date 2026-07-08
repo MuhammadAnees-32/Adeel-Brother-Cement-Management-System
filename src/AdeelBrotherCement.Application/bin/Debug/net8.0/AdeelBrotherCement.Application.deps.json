@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "AdeelBrotherCement.Application/1.0.0": {
+        "dependencies": {
+          "AdeelBrotherCement.Domain": "1.0.0"
+        },
+        "runtime": {
+          "AdeelBrotherCement.Application.dll": {}
+        }
+      },
+      "AdeelBrotherCement.Domain/1.0.0": {
+        "runtime": {
+          "AdeelBrotherCement.Domain.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "AdeelBrotherCement.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "AdeelBrotherCement.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

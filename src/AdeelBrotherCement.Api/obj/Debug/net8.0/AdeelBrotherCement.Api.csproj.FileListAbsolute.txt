@@ -1,0 +1,132 @@
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\appsettings.Development.json
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\appsettings.json
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Api.staticwebassets.endpoints.json
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Api.exe
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Api.deps.json
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Api.runtimeconfig.json
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Api.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Api.pdb
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\ClosedXML.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\ClosedXML.Parser.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\DocumentFormat.OpenXml.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\DocumentFormat.OpenXml.Framework.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\ExcelNumberFormat.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\RBush.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\SixLabors.Fonts.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\System.IO.Packaging.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Application.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Domain.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Infrastructure.Excel.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Application.pdb
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Infrastructure.Excel.pdb
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Domain.pdb
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.csproj.AssemblyReference.cache
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.GeneratedMSBuildEditorConfig.editorconfig
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.AssemblyInfoInputs.cache
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.AssemblyInfo.cs
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.csproj.CoreCompileInputs.cache
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.MvcApplicationPartsAssemblyInfo.cache
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\scopedcss\bundle\AdeelBrotherCement.Api.styles.css
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets.build.json
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets.development.json
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets\msbuild.AdeelBrotherCement.Api.Microsoft.AspNetCore.StaticWebAssets.props
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets\msbuild.AdeelBrotherCement.Api.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets\msbuild.build.AdeelBrotherCement.Api.props
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.AdeelBrotherCement.Api.props
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.AdeelBrotherCement.Api.props
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets.pack.json
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBro.3C47A375.Up2Date
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\refint\AdeelBrotherCement.Api.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.pdb
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.genruntimeconfig.cache
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\ref\AdeelBrotherCement.Api.dll
+D:\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\appsettings.json
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Api.exe
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Api.deps.json
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Api.runtimeconfig.json
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Api.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Api.pdb
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Azure.Core.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\ClosedXML.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\ClosedXML.Parser.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\DocumentFormat.OpenXml.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\DocumentFormat.OpenXml.Framework.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\ExcelNumberFormat.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Identity.Client.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\RBush.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\SixLabors.Fonts.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\System.ClientModel.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\System.Drawing.Common.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\System.IO.Packaging.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\System.Memory.Data.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\System.Runtime.Caching.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\System.Security.Permissions.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\System.Windows.Extensions.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Application.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Domain.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Infrastructure.Excel.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Application.pdb
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Infrastructure.Excel.pdb
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\bin\Debug\net8.0\AdeelBrotherCement.Domain.pdb
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.csproj.AssemblyReference.cache
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.AssemblyInfoInputs.cache
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.AssemblyInfo.cs
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.csproj.CoreCompileInputs.cache
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets\msbuild.AdeelBrotherCement.Api.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets\msbuild.build.AdeelBrotherCement.Api.props
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.AdeelBrotherCement.Api.props
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.AdeelBrotherCement.Api.props
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\staticwebassets.pack.json
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\scopedcss\bundle\AdeelBrotherCement.Api.styles.css
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBro.3C47A375.Up2Date
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\refint\AdeelBrotherCement.Api.dll
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.pdb
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\AdeelBrotherCement.Api.genruntimeconfig.cache
+C:\Users\PMLS\Downloads\Adeel & Brother Cement\Adeel & Brother Cement\src\AdeelBrotherCement.Api\obj\Debug\net8.0\ref\AdeelBrotherCement.Api.dll
