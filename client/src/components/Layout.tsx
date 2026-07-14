@@ -1,15 +1,20 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { useAuth, type AppScreen } from '@auth';
 
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: '📊' },
-  { to: '/sale', label: 'New Sale', icon: '🧾' },
-  { to: '/sales', label: 'Sales History', icon: '📋' },
-  { to: '/customers', label: 'Customer Balance', icon: '👥' },
-  { to: '/inventory', label: 'Inventory', icon: '📦' },
-  { to: '/expenses', label: 'Expenses', icon: '💰' },
+const navItems: { to: string; label: string; icon: string; screen: AppScreen }[] = [
+  { to: '/dashboard', label: 'Dashboard', icon: '📊', screen: 'Dashboard' },
+  { to: '/sale', label: 'New Sale', icon: '🧾', screen: 'NewSale' },
+  { to: '/sales', label: 'Sales History', icon: '📋', screen: 'SalesHistory' },
+  { to: '/customers', label: 'Customer Balance', icon: '👥', screen: 'CustomerBalance' },
+  { to: '/inventory', label: 'Inventory', icon: '📦', screen: 'Inventory' },
+  { to: '/expenses', label: 'Expenses', icon: '💰', screen: 'Expenses' },
+  { to: '/users', label: 'User Access', icon: '🔐', screen: 'UserManagement' },
 ];
 
 export function Layout() {
+  const { user, logout, hasScreen } = useAuth();
+  const visibleItems = navItems.filter((item) => hasScreen(item.screen));
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -18,11 +23,10 @@ export function Layout() {
           <p>Cement & Sirya Agency</p>
         </div>
         <nav>
-          {navItems.map((item) => (
+          {visibleItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.to === '/'}
               className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
             >
               <span>{item.icon}</span>
@@ -30,6 +34,15 @@ export function Layout() {
             </NavLink>
           ))}
         </nav>
+        <div className="sidebar-footer">
+          <div className="user-info">
+            <strong>{user?.username}</strong>
+            <span>{user?.role}</span>
+          </div>
+          <button type="button" className="btn btn-logout" onClick={logout}>
+            Sign Out
+          </button>
+        </div>
       </aside>
       <main className="main-content">
         <Outlet />

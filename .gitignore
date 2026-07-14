@@ -315,6 +315,13 @@ FakesAssemblies/
 .ntvs_analysis.dat
 node_modules/
 
+# App-specific: do not publish business data or deploy bundles to GitHub
+deploy/
+data/*
+!data/.gitkeep
+client/dist/
+auth/client/node_modules/
+
 # Visual Studio 6 build log
 *.plg
 

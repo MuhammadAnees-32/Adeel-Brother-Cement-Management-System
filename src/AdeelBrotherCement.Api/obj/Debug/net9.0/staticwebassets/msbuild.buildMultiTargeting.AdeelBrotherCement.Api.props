@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\AdeelBrotherCement.Api.props" />
-</Project>

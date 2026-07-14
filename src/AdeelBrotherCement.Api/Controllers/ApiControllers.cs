@@ -1,11 +1,17 @@
+using AdeelBrotherCement.Api.Authorization;
 using AdeelBrotherCement.Application.DTOs;
+using AdeelBrotherCement.Application.Interfaces;
 using AdeelBrotherCement.Application.Services;
+using AdeelBrotherCement.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdeelBrotherCement.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
+[RequireScreen(AppScreen.Dashboard)]
 public class DashboardController(DashboardService dashboardService) : ControllerBase
 {
     [HttpGet]
@@ -15,9 +21,11 @@ public class DashboardController(DashboardService dashboardService) : Controller
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ProductsController(ProductService productService) : ControllerBase
 {
     [HttpGet]
+    [RequireScreen(AppScreen.Inventory, AppScreen.NewSale)]
     public async Task<ActionResult<IReadOnlyList<ProductDto>>> GetAll([FromQuery] string? category, CancellationToken ct)
     {
         if (!string.IsNullOrWhiteSpace(category))
@@ -27,6 +35,7 @@ public class ProductsController(ProductService productService) : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [RequireScreen(AppScreen.Inventory)]
     public async Task<ActionResult<ProductDto>> Update(Guid id, [FromBody] UpdateProductRequest request, CancellationToken ct)
     {
         var product = await productService.UpdateAsync(id, request, ct);
@@ -34,6 +43,7 @@ public class ProductsController(ProductService productService) : ControllerBase
     }
 
     [HttpPost]
+    [RequireScreen(AppScreen.Inventory)]
     public async Task<ActionResult<ProductDto>> Create([FromBody] CreateProductRequest request, CancellationToken ct)
     {
         try
@@ -52,6 +62,7 @@ public class ProductsController(ProductService productService) : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [RequireScreen(AppScreen.Inventory)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         try
@@ -67,13 +78,16 @@ public class ProductsController(ProductService productService) : ControllerBase
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SalesController(TransactionService transactionService) : ControllerBase
 {
     [HttpGet]
+    [RequireScreen(AppScreen.SalesHistory)]
     public async Task<ActionResult<IReadOnlyList<SaleDto>>> GetAll(CancellationToken ct)
         => Ok(await transactionService.GetAllAsync(ct));
 
     [HttpGet("{id:guid}")]
+    [RequireScreen(AppScreen.SalesHistory, AppScreen.NewSale)]
     public async Task<ActionResult<SaleDto>> GetById(Guid id, CancellationToken ct)
     {
         var sale = await transactionService.GetByIdAsync(id, ct);
@@ -81,6 +95,7 @@ public class SalesController(TransactionService transactionService) : Controller
     }
 
     [HttpPost]
+    [RequireScreen(AppScreen.NewSale)]
     public async Task<ActionResult<SaleDto>> Create([FromBody] CreateSaleRequest request, CancellationToken ct)
     {
         try
@@ -97,6 +112,8 @@ public class SalesController(TransactionService transactionService) : Controller
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
+[RequireScreen(AppScreen.CustomerBalance)]
 public class CustomersController(CustomerService customerService) : ControllerBase
 {
     [HttpGet]
@@ -145,6 +162,8 @@ public class CustomersController(CustomerService customerService) : ControllerBa
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
+[RequireScreen(AppScreen.Inventory)]
 public class InventoryController(InventoryService inventoryService) : ControllerBase
 {
     [HttpGet]
@@ -168,6 +187,8 @@ public class InventoryController(InventoryService inventoryService) : Controller
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
+[RequireScreen(AppScreen.Expenses)]
 public class ExpensesController(ExpenseService expenseService) : ControllerBase
 {
     [HttpGet]
@@ -190,4 +211,33 @@ public class ExpensesController(ExpenseService expenseService) : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
         => await expenseService.DeleteAsync(id, ct) ? NoContent() : NotFound();
+}
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+[RequireScreen(AppScreen.Dashboard)]
+public class BackupController(IBackupService backupService) : ControllerBase
+{
+    [HttpPost]
+    public async Task<ActionResult<BackupResult>> Create(CancellationToken ct)
+    {
+        try
+        {
+            var result = await backupService.CreateDailyBackupAsync(ct);
+            return Ok(result);
+        }
+        catch (FileNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet]
+    public ActionResult<IReadOnlyList<BackupInfo>> List([FromQuery] int limit = 10)
+        => Ok(backupService.GetRecentBackups(limit));
 }

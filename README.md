@@ -40,13 +40,18 @@ Open `http://localhost:5173` in your browser.
 ## Project Structure
 
 ```
+auth/                                 # Authentication module
+  client/                             # Login, roles, screen permissions (React)
+  server/                             # Backend auth docs (code in src/)
+client/                               # React frontend
+data/                                 # Excel workbook (auto-created)
+scripts/                              # Build & setup scripts
 src/
   AdeelBrotherCement.Domain/          # Entities & enums
   AdeelBrotherCement.Application/     # Services, DTOs, repository interfaces
   AdeelBrotherCement.Infrastructure.Excel/  # Excel data layer
   AdeelBrotherCement.Api/             # REST API
-client/                               # React frontend
-data/                                 # Excel workbook (auto-created)
+deploy/                               # Packaged app (after running scripts/publish.ps1)
 ```
 
 ## Future: Google Drive & Database

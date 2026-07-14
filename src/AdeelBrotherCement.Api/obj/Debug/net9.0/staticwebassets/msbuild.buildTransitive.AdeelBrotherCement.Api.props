@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\AdeelBrotherCement.Api.props" />
-</Project>

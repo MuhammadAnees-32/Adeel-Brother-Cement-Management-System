@@ -54,3 +54,13 @@ public interface IStockRepository
     Task SetStockAsync(Guid productId, decimal quantity, string reason, CancellationToken ct = default);
     Task<IReadOnlyList<StockAdjustment>> GetAdjustmentsAsync(CancellationToken ct = default);
 }
+
+public interface IUserRepository
+{
+    Task<IReadOnlyList<AppUser>> GetAllAsync(CancellationToken ct = default);
+    Task<AppUser?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<AppUser?> GetByUsernameAsync(string username, CancellationToken ct = default);
+    Task<AppUser> CreateAsync(AppUser user, CancellationToken ct = default);
+    Task<AppUser> UpdateAsync(AppUser user, CancellationToken ct = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+}

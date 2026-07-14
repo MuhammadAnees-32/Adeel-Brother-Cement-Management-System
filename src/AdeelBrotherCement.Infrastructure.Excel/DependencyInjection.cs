@@ -18,6 +18,8 @@ public static class DependencyInjection
         services.AddScoped<ICustomerRepository, ExcelCustomerRepository>();
         services.AddScoped<ICustomerPaymentRepository, ExcelCustomerPaymentRepository>();
         services.AddScoped<IStockRepository, ExcelStockRepository>();
+        services.AddScoped<IUserRepository, ExcelUserRepository>();
+        services.AddScoped<IBackupService, ExcelBackupService>();
 
         services.AddScoped<ProductService>();
         services.AddScoped<CustomerService>();
@@ -25,6 +27,7 @@ public static class DependencyInjection
         services.AddScoped<ExpenseService>();
         services.AddScoped<InventoryService>();
         services.AddScoped<DashboardService>();
+        services.AddScoped<UserService>();
 
         return services;
     }

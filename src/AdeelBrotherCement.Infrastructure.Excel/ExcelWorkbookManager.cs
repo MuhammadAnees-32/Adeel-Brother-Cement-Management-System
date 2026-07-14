@@ -1,3 +1,4 @@
+using AdeelBrotherCement.Application;
 using AdeelBrotherCement.Domain.Entities;
 using AdeelBrotherCement.Domain.Enums;
 using ClosedXML.Excel;
@@ -68,8 +69,62 @@ internal static class ExcelDataSeeder
         CreateExpensesSheet(workbook);
         CreateStockAdjustmentsSheet(workbook);
         CreateCustomerPaymentsSheet(workbook);
+        CreateUsersSheet(workbook);
+        SeedDefaultUsers(workbook);
 
         workbook.SaveAs(path);
+    }
+
+    public static void CreateUsersSheet(XLWorkbook workbook)
+    {
+        var sheet = workbook.Worksheets.Add("Users");
+        sheet.Cell(1, 1).Value = "Id";
+        sheet.Cell(1, 2).Value = "Username";
+        sheet.Cell(1, 3).Value = "PasswordHash";
+        sheet.Cell(1, 4).Value = "Role";
+        sheet.Cell(1, 5).Value = "AllowedScreens";
+        sheet.Cell(1, 6).Value = "IsActive";
+        sheet.Row(1).Style.Font.Bold = true;
+    }
+
+    public static void SeedDefaultUsers(XLWorkbook workbook)
+    {
+        var sheet = workbook.Worksheet("Users");
+        if (sheet.RowsUsed().Count() > 1) return;
+
+        var users = new[]
+        {
+            new AppUser
+            {
+                Id = Guid.NewGuid(),
+                Username = "admin",
+                PasswordHash = PasswordHasher.Hash("Admin@123"),
+                Role = UserRole.Admin,
+                AllowedScreens = ScreenPermissions.AllScreens.ToList(),
+                IsActive = true
+            },
+            new AppUser
+            {
+                Id = Guid.NewGuid(),
+                Username = "MuhammadAnees",
+                PasswordHash = PasswordHasher.Hash("MAnees@2026!"),
+                Role = UserRole.Admin,
+                AllowedScreens = ScreenPermissions.AllScreens.ToList(),
+                IsActive = true
+            }
+        };
+
+        var row = 2;
+        foreach (var user in users)
+        {
+            sheet.Cell(row, 1).Value = user.Id.ToString();
+            sheet.Cell(row, 2).Value = user.Username;
+            sheet.Cell(row, 3).Value = user.PasswordHash;
+            sheet.Cell(row, 4).Value = user.Role.ToString();
+            sheet.Cell(row, 5).Value = ScreenPermissions.ToClaimValue(user.AllowedScreens);
+            sheet.Cell(row, 6).Value = user.IsActive;
+            row++;
+        }
     }
 
     private static void CreateProductsSheet(XLWorkbook workbook)

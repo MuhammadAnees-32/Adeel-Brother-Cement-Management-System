@@ -141,3 +141,63 @@ export interface CreateProductRequest {
   salePrice: number;
   stockQuantity: number;
 }
+
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  username: string;
+  role: string;
+  allowedScreens: string[];
+}
+
+export interface UserAccount {
+  id: string;
+  username: string;
+  role: 'Admin' | 'Salesman';
+  allowedScreens: string[];
+  isActive: boolean;
+}
+
+export interface ScreenInfo {
+  key: string;
+  label: string;
+}
+
+export interface CurrentUserResponse {
+  username: string;
+  role: string;
+  allowedScreens: string[];
+}
+
+export interface CreateUserRequest {
+  username: string;
+  password: string;
+  role: string;
+  allowedScreens?: string[];
+}
+
+export interface UpdateUserRequest {
+  password?: string;
+  role: string;
+  allowedScreens: string[];
+  isActive: boolean;
+}
+
+export interface BackupInfo {
+  dateFolder: string;
+  folderPath: string;
+  fileCount: number;
+  lastUpdated: string;
+}
+
+export interface BackupResult {
+  dateFolder: string;
+  folderPath: string;
+  files: string[];
+  createdAt: string;
+  message: string;
+}

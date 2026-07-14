@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
-import type { Dashboard } from '../types/api';
+import type { BackupInfo, Dashboard } from '../types/api';
 import { formatCurrency } from '../utils/format';
 
 export function DashboardPage() {
@@ -9,13 +9,35 @@ export function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [balanceSearch, setBalanceSearch] = useState('');
+  const [backups, setBackups] = useState<BackupInfo[]>([]);
+  const [backupMessage, setBackupMessage] = useState('');
+  const [backupError, setBackupError] = useState('');
+  const [backingUp, setBackingUp] = useState(false);
 
   useEffect(() => {
     api.getDashboard()
       .then(setData)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
+
+    api.getBackups().then(setBackups).catch(() => {});
   }, []);
+
+  async function handleBackup() {
+    setBackingUp(true);
+    setBackupError('');
+    setBackupMessage('');
+    try {
+      const result = await api.createBackup();
+      setBackupMessage(result.message);
+      const list = await api.getBackups();
+      setBackups(list);
+    } catch (e) {
+      setBackupError(e instanceof Error ? e.message : 'Backup failed');
+    } finally {
+      setBackingUp(false);
+    }
+  }
 
   const filteredCustomers = useMemo(() => {
     if (!data) return [];
@@ -35,10 +57,59 @@ export function DashboardPage() {
 
   return (
     <div className="page">
-      <header className="page-header">
-        <h2>Dashboard</h2>
-        <p>Business overview — sales, stock & profit</p>
+      <header className="page-header page-header-row">
+        <div>
+          <h2>Dashboard</h2>
+          <p>Business overview — sales, stock & profit</p>
+        </div>
       </header>
+
+      <section className="card backup-card">
+        <div className="backup-card-header">
+          <div>
+            <h3>Daily Data Backup</h3>
+            <p>One click saves all data into dated Excel files — easy to find later.</p>
+          </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleBackup}
+            disabled={backingUp}
+          >
+            {backingUp ? 'Backing up...' : 'Backup Now'}
+          </button>
+        </div>
+        {backupMessage && <div className="backup-success">{backupMessage}</div>}
+        {backupError && <div className="page-error">{backupError}</div>}
+        <div className="backup-help">
+          <strong>Where files are saved:</strong>
+          <code>data\backups\YYYY-MM-DD\</code>
+          <span> — e.g. Products.xlsx, Customers.xlsx, Transactions.xlsx, Full-Backup.xlsx</span>
+        </div>
+        {backups.length > 0 && (
+          <div className="backup-list">
+            <h4>Recent Backups</h4>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Files</th>
+                  <th>Folder</th>
+                </tr>
+              </thead>
+              <tbody>
+                {backups.map((b) => (
+                  <tr key={b.dateFolder}>
+                    <td>{b.dateFolder}</td>
+                    <td>{b.fileCount} Excel files</td>
+                    <td className="backup-path">{b.folderPath}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
       <div className="stat-grid">
         <div className="stat-card accent-blue">
