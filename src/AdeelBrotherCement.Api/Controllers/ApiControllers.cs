@@ -10,6 +10,16 @@ namespace AdeelBrotherCement.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[AllowAnonymous]
+public class HealthController : ControllerBase
+{
+    [HttpGet]
+    public IActionResult Get()
+        => Ok(new { status = "ok", timestamp = DateTime.Now });
+}
+
+[ApiController]
+[Route("api/[controller]")]
 [Authorize]
 [RequireScreen(AppScreen.Dashboard)]
 public class DashboardController(DashboardService dashboardService) : ControllerBase

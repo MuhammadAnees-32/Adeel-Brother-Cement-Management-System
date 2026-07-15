@@ -3,22 +3,37 @@ param(
     [string]$DeployDir
 )
 
+$startPs1 = @'
+$ErrorActionPreference = "Stop"
+$appDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$exe = Join-Path $appDir "AdeelBrotherCement.Api.exe"
+$url = "http://localhost:5049"
+
+$running = Get-Process -Name "AdeelBrotherCement.Api" -ErrorAction SilentlyContinue
+if (-not $running) {
+    $env:ASPNETCORE_ENVIRONMENT = "Production"
+    Start-Process -FilePath $exe -WorkingDirectory $appDir -WindowStyle Hidden
+    $deadline = (Get-Date).AddSeconds(30)
+    do {
+        Start-Sleep -Milliseconds 500
+        try {
+            $null = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 2
+            break
+        } catch {
+            if ((Get-Date) -gt $deadline) { break }
+        }
+    } while ($true)
+}
+
+Start-Process $url
+'@
+
 $openVbs = @'
 Set shell = CreateObject("WScript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
 appDir = fso.GetParentFolderName(WScript.ScriptFullName)
-exePath = appDir & "\AdeelBrotherCement.Api.exe"
-
-isRunning = False
-Set processes = GetObject("winmgmts:").ExecQuery("SELECT * FROM Win32_Process WHERE Name='AdeelBrotherCement.Api.exe'")
-If processes.Count > 0 Then isRunning = True
-
-If Not isRunning Then
-    shell.Run """" & exePath & """", 0, False
-    WScript.Sleep 3000
-End If
-
-shell.Run "http://localhost:5049", 1, False
+ps1 = appDir & "\Start-App.ps1"
+shell.Run "powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File """ & ps1 & """", 0, False
 '@
 
 $stopVbs = @'
@@ -36,6 +51,7 @@ Else
 End If
 '@
 
+Set-Content -Path (Join-Path $DeployDir "Start-App.ps1") -Value $startPs1 -Encoding UTF8
 Set-Content -Path (Join-Path $DeployDir "Open App.vbs") -Value $openVbs -Encoding ASCII
 Set-Content -Path (Join-Path $DeployDir "Stop App.vbs") -Value $stopVbs -Encoding ASCII
 
@@ -48,8 +64,14 @@ OPEN THE APP (NO BLACK SCREEN)
 Double-click: Open App.vbs
 
 - Starts the app in the background (hidden)
+- Waits until the server is ready
 - Opens your browser to the login page
 - Your sales history is saved in data\BusinessData.xlsx
+
+IF YOU SEE "FAILED TO FETCH" OR "CANNOT CONNECT"
+------------------------------------------------
+The app server is not running. Double-click Open App.vbs again.
+Do NOT open the browser manually before starting the app.
 
 LOGIN
 -----

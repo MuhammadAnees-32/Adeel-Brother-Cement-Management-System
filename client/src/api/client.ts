@@ -60,10 +60,17 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const response = await fetch(`${API_BASE}${url}`, {
-    ...options,
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE}${url}`, {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new Error(
+      'Cannot connect to server. The app is not running — double-click Open App.vbs in deploy\\AdeelBrotherCement, then refresh this page.',
+    );
+  }
 
   if (response.status === 401) {
     sessionStorage.removeItem('abc_auth');
