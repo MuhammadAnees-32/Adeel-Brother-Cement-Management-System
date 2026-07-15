@@ -144,6 +144,22 @@ public class CustomersController(CustomerService customerService) : ControllerBa
     public async Task<ActionResult<IReadOnlyList<CustomerPaymentDto>>> GetPayments(Guid id, CancellationToken ct)
         => Ok(await customerService.GetPaymentsAsync(id, ct));
 
+    [HttpGet("search")]
+    public async Task<ActionResult<IReadOnlyList<CustomerDto>>> Search([FromQuery] string q, CancellationToken ct)
+        => Ok(await customerService.SearchAsync(q, ct));
+
+    [HttpGet("lookup")]
+    public async Task<ActionResult<CustomerLookupDto>> Lookup(
+        [FromQuery] string name, [FromQuery] string mobile, CancellationToken ct)
+        => Ok(await customerService.LookupAsync(name, mobile, ct));
+
+    [HttpGet("{id:guid}/khata")]
+    public async Task<ActionResult<KhataBookDto>> GetKhata(Guid id, CancellationToken ct)
+    {
+        var khata = await customerService.GetKhataBookAsync(id, ct);
+        return khata is null ? NotFound() : Ok(khata);
+    }
+
     [HttpPost("{id:guid}/payments")]
     public async Task<ActionResult<CustomerPaymentDto>> RecordPayment(
         Guid id, [FromBody] RecordPaymentRequest request, CancellationToken ct)
@@ -240,4 +256,196 @@ public class BackupController(IBackupService backupService) : ControllerBase
     [HttpGet]
     public ActionResult<IReadOnlyList<BackupInfo>> List([FromQuery] int limit = 10)
         => Ok(backupService.GetRecentBackups(limit));
+}
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+[RequireScreen(AppScreen.Dashboard)]
+public class SyncController(ISyncService syncService) : ControllerBase
+{
+    [HttpPost]
+    public async Task<ActionResult<SyncResult>> Sync(CancellationToken ct)
+    {
+        try
+        {
+            var result = await syncService.SyncAsync(ct);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("status")]
+    public ActionResult<SyncStatus> Status() => Ok(syncService.GetStatus());
+}
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+[RequireScreen(AppScreen.Dealers)]
+public class DealersController(DealerService dealerService) : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<DealerDto>>> GetAll(CancellationToken ct)
+        => Ok(await dealerService.GetAllAsync(ct));
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<DealerDto>> GetById(Guid id, CancellationToken ct)
+    {
+        var dealer = await dealerService.GetByIdAsync(id, ct);
+        return dealer is null ? NotFound() : Ok(dealer);
+    }
+
+    [HttpGet("{id:guid}/history")]
+    public async Task<ActionResult<DealerHistoryDto>> GetHistory(Guid id, CancellationToken ct)
+    {
+        var history = await dealerService.GetHistoryAsync(id, ct);
+        return history is null ? NotFound() : Ok(history);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<DealerDto>> Create([FromBody] CreateDealerRequest request, CancellationToken ct)
+    {
+        try
+        {
+            var dealer = await dealerService.CreateAsync(request, ct);
+            return Created(string.Empty, dealer);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("purchases")]
+    public async Task<ActionResult<DealerPurchaseDto>> RecordPurchase(
+        [FromBody] CreateDealerPurchaseRequest request, CancellationToken ct)
+    {
+        try
+        {
+            var purchase = await dealerService.RecordPurchaseAsync(request, ct);
+            return Created(string.Empty, purchase);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("{id:guid}/payments")]
+    public async Task<ActionResult<DealerPaymentDto>> RecordPayment(
+        Guid id, [FromBody] RecordDealerPaymentRequest request, CancellationToken ct)
+    {
+        try
+        {
+            var payment = await dealerService.RecordPaymentAsync(id, request, ct);
+            return Created(string.Empty, payment);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+}
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+[RequireScreen(AppScreen.AdvanceBookings)]
+public class BookingsController(BookingService bookingService) : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<AdvanceBookingDto>>> GetAll(CancellationToken ct)
+        => Ok(await bookingService.GetAllAsync(ct));
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<AdvanceBookingDto>> GetById(Guid id, CancellationToken ct)
+    {
+        var booking = await bookingService.GetByIdAsync(id, ct);
+        return booking is null ? NotFound() : Ok(booking);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<AdvanceBookingDto>> Create(
+        [FromBody] CreateAdvanceBookingRequest request, CancellationToken ct)
+    {
+        try
+        {
+            var booking = await bookingService.CreateAsync(request, ct);
+            return Created(string.Empty, booking);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("{id:guid}/deliver")]
+    public async Task<ActionResult<SaleDto>> Deliver(
+        Guid id, [FromBody] RecordPaymentRequest? request, CancellationToken ct)
+    {
+        try
+        {
+            var sale = await bookingService.DeliverAsync(id, request?.Amount, ct);
+            return Ok(sale);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+}
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+[RequireScreen(AppScreen.Reports)]
+public class ReportsController(ReportService reportService) : ControllerBase
+{
+    [HttpGet("daily-sales")]
+    public async Task<ActionResult<SalesReportDto>> DailySales([FromQuery] DateTime? date, CancellationToken ct)
+        => Ok(await reportService.GetDailySalesAsync(date, ct));
+
+    [HttpGet("monthly-sales")]
+    public async Task<ActionResult<SalesReportDto>> MonthlySales(
+        [FromQuery] int? year, [FromQuery] int? month, CancellationToken ct)
+        => Ok(await reportService.GetMonthlySalesAsync(year, month, ct));
+
+    [HttpGet("sales")]
+    public async Task<ActionResult<SalesReportDto>> Sales(
+        [FromQuery] DateTime from, [FromQuery] DateTime to, CancellationToken ct)
+        => Ok(await reportService.GetSalesReportAsync(from, to, ct));
+
+    [HttpGet("customer-balances")]
+    public async Task<ActionResult<CustomerBalanceReportDto>> CustomerBalances(CancellationToken ct)
+        => Ok(await reportService.GetCustomerBalanceReportAsync(ct));
+
+    [HttpGet("dealer-outstanding")]
+    public async Task<ActionResult<DealerOutstandingReportDto>> DealerOutstanding(CancellationToken ct)
+        => Ok(await reportService.GetDealerOutstandingReportAsync(ct));
+
+    [HttpGet("inventory")]
+    public async Task<ActionResult<InventoryReportDto>> Inventory(CancellationToken ct)
+        => Ok(await reportService.GetInventoryReportAsync(ct));
+
+    [HttpGet("low-stock")]
+    public async Task<ActionResult<LowStockReportDto>> LowStock(CancellationToken ct)
+        => Ok(await reportService.GetLowStockReportAsync(ct: ct));
+
+    [HttpGet("purchases")]
+    public async Task<ActionResult<PurchaseReportDto>> Purchases(
+        [FromQuery] DateTime from, [FromQuery] DateTime to, CancellationToken ct)
+        => Ok(await reportService.GetPurchaseReportAsync(from, to, ct));
+
+    [HttpGet("profit")]
+    public async Task<ActionResult<ProfitReportDto>> Profit(
+        [FromQuery] DateTime from, [FromQuery] DateTime to, CancellationToken ct)
+        => Ok(await reportService.GetProfitReportAsync(from, to, ct));
+
+    [HttpGet("advance-bookings")]
+    public async Task<ActionResult<AdvanceBookingReportDto>> AdvanceBookings(CancellationToken ct)
+        => Ok(await reportService.GetAdvanceBookingReportAsync(ct));
 }

@@ -90,5 +90,6 @@ public class ProductService(
 
     private static ProductDto Map(Product p) => new(
         p.Id, p.Category.ToString(), p.Name, p.Unit,
-        p.PurchasePrice, p.SalePrice, p.StockQuantity, p.IsActive);
+        p.PurchasePrice, p.SalePrice, p.StockQuantity, p.IsActive,
+        p.DealerId, p.DealerName, p.TotalPurchased, p.TotalSold);
 }

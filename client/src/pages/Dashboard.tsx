@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
-import type { BackupInfo, Dashboard } from '../types/api';
+import type { BackupInfo, Dashboard, SyncStatus } from '../types/api';
 import { formatCurrency } from '../utils/format';
 
 export function DashboardPage() {
@@ -13,6 +13,10 @@ export function DashboardPage() {
   const [backupMessage, setBackupMessage] = useState('');
   const [backupError, setBackupError] = useState('');
   const [backingUp, setBackingUp] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
+  const [syncMessage, setSyncMessage] = useState('');
+  const [syncError, setSyncError] = useState('');
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     api.getDashboard()
@@ -21,7 +25,24 @@ export function DashboardPage() {
       .finally(() => setLoading(false));
 
     api.getBackups().then(setBackups).catch(() => {});
+    api.getSyncStatus().then(setSyncStatus).catch(() => {});
   }, []);
+
+  async function handleSync() {
+    setSyncing(true);
+    setSyncError('');
+    setSyncMessage('');
+    try {
+      const result = await api.syncExcel();
+      setSyncMessage(result.message);
+      const status = await api.getSyncStatus();
+      setSyncStatus(status);
+    } catch (e) {
+      setSyncError(e instanceof Error ? e.message : 'Sync failed — you can retry later without losing data');
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   async function handleBackup() {
     setBackingUp(true);
@@ -108,6 +129,28 @@ export function DashboardPage() {
               </tbody>
             </table>
           </div>
+        )}
+      </section>
+
+      <section className="card backup-card">
+        <div className="backup-card-header">
+          <div>
+            <h3>Sync Excel</h3>
+            <p>Backup, save workbook, and upload copies to server / OneDrive folders.</p>
+            {syncStatus?.lastSuccessfulSync && (
+              <p className="sync-last">
+                Last successful sync: {new Date(syncStatus.lastSuccessfulSync).toLocaleString()}
+              </p>
+            )}
+          </div>
+          <button type="button" className="btn btn-primary" onClick={handleSync} disabled={syncing}>
+            {syncing ? 'Syncing...' : 'Sync Excel'}
+          </button>
+        </div>
+        {syncMessage && <div className="backup-success">{syncMessage}</div>}
+        {syncError && <div className="page-error">{syncError}</div>}
+        {!syncStatus?.oneDriveConfigured && (
+          <p className="backup-help">Set <code>Sync:OneDriveDirectory</code> in appsettings.json to enable OneDrive upload.</p>
         )}
       </section>
 

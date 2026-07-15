@@ -18,7 +18,11 @@ public class InventoryService(IProductRepository productRepository, IStockReposi
                 p.StockQuantity,
                 p.PurchasePrice,
                 p.SalePrice,
-                p.StockQuantity * p.PurchasePrice))
+                p.StockQuantity * p.PurchasePrice,
+                p.DealerName,
+                p.TotalPurchased,
+                p.TotalSold,
+                p.StockQuantity))
             .OrderBy(p => p.Category)
             .ThenBy(p => p.Name)
             .ToList();
@@ -32,10 +36,7 @@ public class InventoryService(IProductRepository productRepository, IStockReposi
         await stockRepository.AdjustStockAsync(productId, request.Quantity, request.Reason, ct);
 
         var updated = await productRepository.GetByIdAsync(productId, ct);
-        return updated is null ? null : new InventoryItemDto(
-            updated.Id, updated.Category.ToString(), updated.Name, updated.Unit,
-            updated.StockQuantity, updated.PurchasePrice, updated.SalePrice,
-            updated.StockQuantity * updated.PurchasePrice);
+        return updated is null ? null : MapItem(updated);
     }
 
     public async Task<InventoryItemDto?> SetStockAsync(Guid productId, StockAdjustmentRequest request, CancellationToken ct = default)
@@ -46,9 +47,12 @@ public class InventoryService(IProductRepository productRepository, IStockReposi
         await stockRepository.SetStockAsync(productId, request.Quantity, request.Reason, ct);
 
         var updated = await productRepository.GetByIdAsync(productId, ct);
-        return updated is null ? null : new InventoryItemDto(
-            updated.Id, updated.Category.ToString(), updated.Name, updated.Unit,
-            updated.StockQuantity, updated.PurchasePrice, updated.SalePrice,
-            updated.StockQuantity * updated.PurchasePrice);
+        return updated is null ? null : MapItem(updated);
     }
+
+    private static InventoryItemDto MapItem(Domain.Entities.Product p) => new(
+        p.Id, p.Category.ToString(), p.Name, p.Unit,
+        p.StockQuantity, p.PurchasePrice, p.SalePrice,
+        p.StockQuantity * p.PurchasePrice,
+        p.DealerName, p.TotalPurchased, p.TotalSold, p.StockQuantity);
 }

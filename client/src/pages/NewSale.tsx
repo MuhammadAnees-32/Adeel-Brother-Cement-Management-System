@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { api } from '../api/client';
 import { printSaleSlip, SaleSlip } from '../components/SaleSlip';
 import { SearchableSelect } from '../components/SearchableSelect';
@@ -15,9 +16,14 @@ interface CartItem {
 }
 
 export function NewSalePage() {
+  const location = useLocation();
+  const prefill = (location.state as { customerName?: string; customerMobile?: string; customerId?: string }) ?? {};
+
   const [products, setProducts] = useState<Product[]>([]);
-  const [customerName, setCustomerName] = useState('');
-  const [customerMobile, setCustomerMobile] = useState('');
+  const [customerName, setCustomerName] = useState(prefill.customerName ?? '');
+  const [customerMobile, setCustomerMobile] = useState(prefill.customerMobile ?? '');
+  const [existingCustomerMsg, setExistingCustomerMsg] = useState('');
+  const [previousBalance, setPreviousBalance] = useState(0);
   const [amountPaid, setAmountPaid] = useState<number | ''>('');
   const [notes, setNotes] = useState('');
   const [saleDate, setSaleDate] = useState(toInputDate());
@@ -32,6 +38,31 @@ export function NewSalePage() {
   useEffect(() => {
     api.getProducts().then(setProducts).catch((e) => setError(e.message));
   }, []);
+
+  useEffect(() => {
+    if (prefill.customerName && prefill.customerMobile) {
+      lookupCustomer(prefill.customerName, prefill.customerMobile);
+    }
+  }, []);
+
+  const lookupCustomer = async (name: string, mobile: string) => {
+    if (!name.trim() || !mobile.trim()) {
+      setExistingCustomerMsg('');
+      setPreviousBalance(0);
+      return;
+    }
+    try {
+      const result = await api.lookupCustomer(name.trim(), mobile.trim());
+      setExistingCustomerMsg(result.message);
+      setPreviousBalance(result.customer?.balance ?? 0);
+    } catch {
+      setExistingCustomerMsg('');
+    }
+  };
+
+  const onCustomerBlur = () => {
+    lookupCustomer(customerName, customerMobile);
+  };
 
   const selectedProductData = products.find((p) => p.id === selectedProduct);
 
@@ -200,7 +231,7 @@ export function NewSalePage() {
           <div className="form-grid">
             <label>
               Customer Name *
-              <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Enter customer name" />
+              <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} onBlur={onCustomerBlur} placeholder="Enter customer name" />
             </label>
             <label>
               Mobile Number *
@@ -208,10 +239,17 @@ export function NewSalePage() {
                 type="tel"
                 value={customerMobile}
                 onChange={(e) => setCustomerMobile(e.target.value)}
+                onBlur={onCustomerBlur}
                 placeholder="03XX XXXXXXX"
                 required
               />
             </label>
+            {existingCustomerMsg && (
+              <p className={`full-width customer-lookup-msg ${previousBalance > 0 ? 'warning' : 'info'}`}>
+                {existingCustomerMsg}
+                {previousBalance > 0 && <> Previous balance: <strong>{formatCurrency(previousBalance)}</strong></>}
+              </p>
+            )}
             <label>
               Date
               <input type="date" value={saleDate} onChange={(e) => setSaleDate(e.target.value)} />
@@ -303,7 +341,17 @@ export function NewSalePage() {
                   </label>
                   {balance > 0 && (
                     <span className="balance-due">
-                      Balance: <strong>{formatCurrency(balance)}</strong>
+                      This bill balance: <strong>{formatCurrency(balance)}</strong>
+                    </span>
+                  )}
+                  {previousBalance > 0 && (
+                    <span className="balance-due">
+                      Previous balance: <strong>{formatCurrency(previousBalance)}</strong>
+                    </span>
+                  )}
+                  {(previousBalance + balance) > 0 && (
+                    <span className="balance-due total-balance">
+                      Total remaining: <strong>{formatCurrency(previousBalance + balance)}</strong>
                     </span>
                   )}
                 </div>

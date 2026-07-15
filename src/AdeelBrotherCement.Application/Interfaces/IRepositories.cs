@@ -37,6 +37,8 @@ public interface ICustomerRepository
     Task<IReadOnlyList<Customer>> GetAllAsync(CancellationToken ct = default);
     Task<Customer?> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task<Customer?> GetByPhoneAsync(string phone, CancellationToken ct = default);
+    Task<Customer?> GetByNameAndPhoneAsync(string name, string phone, CancellationToken ct = default);
+    Task<IReadOnlyList<Customer>> SearchAsync(string query, CancellationToken ct = default);
     Task<Customer> CreateAsync(Customer customer, CancellationToken ct = default);
     Task<Customer> UpdateAsync(Customer customer, CancellationToken ct = default);
 }
@@ -63,4 +65,36 @@ public interface IUserRepository
     Task<AppUser> CreateAsync(AppUser user, CancellationToken ct = default);
     Task<AppUser> UpdateAsync(AppUser user, CancellationToken ct = default);
     Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+}
+
+public interface IDealerRepository
+{
+    Task<IReadOnlyList<Dealer>> GetAllAsync(CancellationToken ct = default);
+    Task<Dealer?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<Dealer?> GetByNameAsync(string name, CancellationToken ct = default);
+    Task<Dealer> CreateAsync(Dealer dealer, CancellationToken ct = default);
+    Task<Dealer> UpdateAsync(Dealer dealer, CancellationToken ct = default);
+}
+
+public interface IDealerPurchaseRepository
+{
+    Task<IReadOnlyList<DealerPurchase>> GetAllAsync(CancellationToken ct = default);
+    Task<IReadOnlyList<DealerPurchase>> GetByDealerIdAsync(Guid dealerId, CancellationToken ct = default);
+    Task<DealerPurchase> CreateAsync(DealerPurchase purchase, CancellationToken ct = default);
+    Task<DealerPurchase> UpdateAsync(DealerPurchase purchase, CancellationToken ct = default);
+}
+
+public interface IDealerPaymentRepository
+{
+    Task<IReadOnlyList<DealerPayment>> GetAllAsync(CancellationToken ct = default);
+    Task<IReadOnlyList<DealerPayment>> GetByDealerIdAsync(Guid dealerId, CancellationToken ct = default);
+    Task<DealerPayment> CreateAsync(DealerPayment payment, CancellationToken ct = default);
+}
+
+public interface IAdvanceBookingRepository
+{
+    Task<IReadOnlyList<AdvanceBooking>> GetAllAsync(CancellationToken ct = default);
+    Task<AdvanceBooking?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<AdvanceBooking> CreateAsync(AdvanceBooking booking, CancellationToken ct = default);
+    Task<AdvanceBooking> UpdateAsync(AdvanceBooking booking, CancellationToken ct = default);
 }

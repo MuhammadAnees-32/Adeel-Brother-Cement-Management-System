@@ -20,6 +20,7 @@ public class ExcelWorkbookManager(IOptions<ExcelDataOptions> options)
         {
             EnsureWorkbookExists();
             using var workbook = new XLWorkbook(_workbookPath);
+            ExcelSchemaMigrator.Migrate(workbook);
             var result = action(workbook);
             workbook.Save();
             return result;
@@ -37,6 +38,7 @@ public class ExcelWorkbookManager(IOptions<ExcelDataOptions> options)
         {
             EnsureWorkbookExists();
             using var workbook = new XLWorkbook(_workbookPath);
+            ExcelSchemaMigrator.Migrate(workbook);
             action(workbook);
             workbook.Save();
         }
@@ -69,6 +71,10 @@ internal static class ExcelDataSeeder
         CreateExpensesSheet(workbook);
         CreateStockAdjustmentsSheet(workbook);
         CreateCustomerPaymentsSheet(workbook);
+        CreateDealersSheet(workbook);
+        CreateDealerPurchasesSheet(workbook);
+        CreateDealerPaymentsSheet(workbook);
+        CreateAdvanceBookingsSheet(workbook);
         CreateUsersSheet(workbook);
         SeedDefaultUsers(workbook);
 
@@ -138,6 +144,10 @@ internal static class ExcelDataSeeder
         sheet.Cell(1, 6).Value = "SalePrice";
         sheet.Cell(1, 7).Value = "StockQuantity";
         sheet.Cell(1, 8).Value = "IsActive";
+        sheet.Cell(1, 9).Value = "DealerId";
+        sheet.Cell(1, 10).Value = "DealerName";
+        sheet.Cell(1, 11).Value = "TotalPurchased";
+        sheet.Cell(1, 12).Value = "TotalSold";
         sheet.Row(1).Style.Font.Bold = true;
 
         var products = GetDefaultProducts();
@@ -152,6 +162,10 @@ internal static class ExcelDataSeeder
             sheet.Cell(row, 6).Value = product.SalePrice;
             sheet.Cell(row, 7).Value = product.StockQuantity;
             sheet.Cell(row, 8).Value = product.IsActive;
+            sheet.Cell(row, 9).Value = product.DealerId?.ToString() ?? "";
+            sheet.Cell(row, 10).Value = product.DealerName ?? "";
+            sheet.Cell(row, 11).Value = product.TotalPurchased;
+            sheet.Cell(row, 12).Value = product.TotalSold;
             row++;
         }
     }
@@ -181,6 +195,7 @@ internal static class ExcelDataSeeder
         sheet.Cell(1, 9).Value = "CustomerMobile";
         sheet.Cell(1, 10).Value = "AmountPaid";
         sheet.Cell(1, 11).Value = "BalanceDue";
+        sheet.Cell(1, 12).Value = "PreviousBalance";
         sheet.Row(1).Style.Font.Bold = true;
     }
 
@@ -229,6 +244,69 @@ internal static class ExcelDataSeeder
         sheet.Cell(1, 4).Value = "Amount";
         sheet.Cell(1, 5).Value = "PaymentDate";
         sheet.Cell(1, 6).Value = "Notes";
+        sheet.Row(1).Style.Font.Bold = true;
+    }
+
+    private static void CreateDealersSheet(XLWorkbook workbook)
+    {
+        var sheet = workbook.Worksheets.Add("Dealers");
+        sheet.Cell(1, 1).Value = "Id";
+        sheet.Cell(1, 2).Value = "Name";
+        sheet.Cell(1, 3).Value = "Phone";
+        sheet.Cell(1, 4).Value = "Address";
+        sheet.Cell(1, 5).Value = "OutstandingBalance";
+        sheet.Row(1).Style.Font.Bold = true;
+    }
+
+    private static void CreateDealerPurchasesSheet(XLWorkbook workbook)
+    {
+        var sheet = workbook.Worksheets.Add("DealerPurchases");
+        sheet.Cell(1, 1).Value = "Id";
+        sheet.Cell(1, 2).Value = "DealerId";
+        sheet.Cell(1, 3).Value = "DealerName";
+        sheet.Cell(1, 4).Value = "ProductId";
+        sheet.Cell(1, 5).Value = "ProductName";
+        sheet.Cell(1, 6).Value = "Quantity";
+        sheet.Cell(1, 7).Value = "UnitPrice";
+        sheet.Cell(1, 8).Value = "TotalAmount";
+        sheet.Cell(1, 9).Value = "AmountPaid";
+        sheet.Cell(1, 10).Value = "BalanceDue";
+        sheet.Cell(1, 11).Value = "PurchaseDate";
+        sheet.Cell(1, 12).Value = "Notes";
+        sheet.Row(1).Style.Font.Bold = true;
+    }
+
+    private static void CreateDealerPaymentsSheet(XLWorkbook workbook)
+    {
+        var sheet = workbook.Worksheets.Add("DealerPayments");
+        sheet.Cell(1, 1).Value = "Id";
+        sheet.Cell(1, 2).Value = "DealerId";
+        sheet.Cell(1, 3).Value = "DealerName";
+        sheet.Cell(1, 4).Value = "Amount";
+        sheet.Cell(1, 5).Value = "PaymentDate";
+        sheet.Cell(1, 6).Value = "Notes";
+        sheet.Row(1).Style.Font.Bold = true;
+    }
+
+    private static void CreateAdvanceBookingsSheet(XLWorkbook workbook)
+    {
+        var sheet = workbook.Worksheets.Add("AdvanceBookings");
+        sheet.Cell(1, 1).Value = "Id";
+        sheet.Cell(1, 2).Value = "CustomerId";
+        sheet.Cell(1, 3).Value = "CustomerName";
+        sheet.Cell(1, 4).Value = "CustomerMobile";
+        sheet.Cell(1, 5).Value = "ProductId";
+        sheet.Cell(1, 6).Value = "ProductName";
+        sheet.Cell(1, 7).Value = "Quantity";
+        sheet.Cell(1, 8).Value = "UnitPrice";
+        sheet.Cell(1, 9).Value = "TotalAmount";
+        sheet.Cell(1, 10).Value = "AdvancePaid";
+        sheet.Cell(1, 11).Value = "RemainingAmount";
+        sheet.Cell(1, 12).Value = "DeliveryDate";
+        sheet.Cell(1, 13).Value = "BookedDate";
+        sheet.Cell(1, 14).Value = "Status";
+        sheet.Cell(1, 15).Value = "InvoiceId";
+        sheet.Cell(1, 16).Value = "Notes";
         sheet.Row(1).Style.Font.Bold = true;
     }
 

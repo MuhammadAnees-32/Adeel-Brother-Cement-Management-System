@@ -13,7 +13,11 @@ import { CustomerBalancesPage } from './pages/CustomerBalances';
 import { DashboardPage } from './pages/Dashboard';
 import { ExpensesPage } from './pages/Expenses';
 import { InventoryPage } from './pages/Inventory';
+import { KhataBookPage } from './pages/KhataBook';
 import { NewSalePage } from './pages/NewSale';
+import { DealersPage } from './pages/Dealers';
+import { AdvanceBookingsPage } from './pages/AdvanceBookings';
+import { ReportsPage } from './pages/Reports';
 import { SalesHistoryPage } from './pages/SalesHistory';
 import './index.css';
 
@@ -25,7 +29,11 @@ function DefaultRedirect() {
   const order: { screen: AppScreen; path: string }[] = [
     { screen: 'Dashboard', path: '/dashboard' },
     { screen: 'NewSale', path: '/sale' },
+    { screen: 'KhataBook', path: '/khata' },
     { screen: 'Inventory', path: '/inventory' },
+    { screen: 'Dealers', path: '/dealers' },
+    { screen: 'AdvanceBookings', path: '/bookings' },
+    { screen: 'Reports', path: '/reports' },
     { screen: 'CustomerBalance', path: '/customers' },
     { screen: 'Expenses', path: '/expenses' },
     { screen: 'SalesHistory', path: '/sales' },
@@ -57,8 +65,20 @@ function App() {
               <Route element={<ProtectedRoute screen="CustomerBalance" />}>
                 <Route path="/customers" element={<CustomerBalancesPage />} />
               </Route>
+              <Route element={<ProtectedRoute screen="KhataBook" />}>
+                <Route path="/khata" element={<KhataBookPage />} />
+              </Route>
               <Route element={<ProtectedRoute screen="Inventory" />}>
                 <Route path="/inventory" element={<InventoryPage />} />
+              </Route>
+              <Route element={<ProtectedRoute screen="Dealers" />}>
+                <Route path="/dealers" element={<DealersPage />} />
+              </Route>
+              <Route element={<ProtectedRoute screen="AdvanceBookings" />}>
+                <Route path="/bookings" element={<AdvanceBookingsPage />} />
+              </Route>
+              <Route element={<ProtectedRoute screen="Reports" />}>
+                <Route path="/reports" element={<ReportsPage />} />
               </Route>
               <Route element={<ProtectedRoute screen="Expenses" />}>
                 <Route path="/expenses" element={<ExpensesPage />} />

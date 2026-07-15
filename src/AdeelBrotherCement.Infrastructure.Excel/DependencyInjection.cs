@@ -19,7 +19,14 @@ public static class DependencyInjection
         services.AddScoped<ICustomerPaymentRepository, ExcelCustomerPaymentRepository>();
         services.AddScoped<IStockRepository, ExcelStockRepository>();
         services.AddScoped<IUserRepository, ExcelUserRepository>();
+        services.AddScoped<IDealerRepository, ExcelDealerRepository>();
+        services.AddScoped<IDealerPurchaseRepository, ExcelDealerPurchaseRepository>();
+        services.AddScoped<IDealerPaymentRepository, ExcelDealerPaymentRepository>();
+        services.AddScoped<IAdvanceBookingRepository, ExcelAdvanceBookingRepository>();
         services.AddScoped<IBackupService, ExcelBackupService>();
+        services.AddScoped<ISyncService, ExcelSyncService>();
+
+        services.Configure<SyncOptions>(configuration.GetSection(SyncOptions.SectionName));
 
         services.AddScoped<ProductService>();
         services.AddScoped<CustomerService>();
@@ -28,6 +35,9 @@ public static class DependencyInjection
         services.AddScoped<InventoryService>();
         services.AddScoped<DashboardService>();
         services.AddScoped<UserService>();
+        services.AddScoped<DealerService>();
+        services.AddScoped<BookingService>();
+        services.AddScoped<ReportService>();
 
         return services;
     }

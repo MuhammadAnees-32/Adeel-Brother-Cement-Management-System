@@ -6,7 +6,11 @@ export type AppScreen =
   | 'NewSale'
   | 'SalesHistory'
   | 'CustomerBalance'
+  | 'KhataBook'
   | 'Inventory'
+  | 'Dealers'
+  | 'AdvanceBookings'
+  | 'Reports'
   | 'Expenses'
   | 'UserManagement';
 

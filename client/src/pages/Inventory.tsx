@@ -209,10 +209,13 @@ export function InventoryPage() {
               <thead>
                 <tr>
                   <th>Product</th>
+                  <th>Dealer</th>
                   <th>Stock</th>
                   <th>Unit</th>
                   <th>Buy Price</th>
                   <th>Sale Price</th>
+                  <th>Purchased</th>
+                  <th>Sold</th>
                   <th>Stock Value</th>
                   <th>Actions</th>
                 </tr>
@@ -223,10 +226,13 @@ export function InventoryPage() {
                     <td>{item.name}</td>
                     {editingId === item.id ? (
                       <>
+                        <td>{item.dealerName || '—'}</td>
                         <td><input type="number" className="input-sm" value={stockQty} onChange={(e) => setStockQty(Number(e.target.value))} /></td>
                         <td>{item.unit}</td>
                         <td><input type="number" className="input-sm" value={purchasePrice} onChange={(e) => setPurchasePrice(Number(e.target.value))} /></td>
                         <td><input type="number" className="input-sm" value={salePrice} onChange={(e) => setSalePrice(Number(e.target.value))} /></td>
+                        <td>{item.totalPurchased}</td>
+                        <td>{item.totalSold}</td>
                         <td>{formatCurrency(stockQty * purchasePrice)}</td>
                         <td className="actions">
                           <button className="btn small" type="button" onClick={() => saveStock(item.id)}>Save</button>
@@ -235,10 +241,13 @@ export function InventoryPage() {
                       </>
                     ) : (
                       <>
+                        <td>{item.dealerName || '—'}</td>
                         <td><strong>{item.stockQuantity}</strong></td>
                         <td>{item.unit}</td>
                         <td>{formatCurrency(item.purchasePrice)}</td>
                         <td>{formatCurrency(item.salePrice)}</td>
+                        <td>{item.totalPurchased}</td>
+                        <td>{item.totalSold}</td>
                         <td>{formatCurrency(item.stockValue)}</td>
                         <td className="actions">
                           <button className="btn small" type="button" onClick={() => startEdit(item)}>Update</button>

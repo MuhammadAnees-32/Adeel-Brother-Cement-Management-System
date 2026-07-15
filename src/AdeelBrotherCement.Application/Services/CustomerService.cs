@@ -31,6 +31,34 @@ public class CustomerService(
         return customer is null ? null : Map(customer);
     }
 
+    public async Task<IReadOnlyList<CustomerDto>> SearchAsync(string query, CancellationToken ct = default)
+    {
+        var customers = await customerRepository.SearchAsync(query, ct);
+        return customers.Select(Map).ToList();
+    }
+
+    public async Task<CustomerLookupDto> LookupAsync(string name, string mobile, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(mobile))
+            return new CustomerLookupDto(false, null, "Name and mobile are required.");
+
+        var existing = await customerRepository.GetByNameAndPhoneAsync(name, mobile, ct);
+        if (existing is null)
+            return new CustomerLookupDto(false, null, "New customer — Khata Book will be created on first sale.");
+
+        return new CustomerLookupDto(true, Map(existing),
+            $"Existing customer found. Current balance: {existing.Balance:N0} PKR.");
+    }
+
+    public async Task<KhataBookDto?> GetKhataBookAsync(Guid customerId, CancellationToken ct = default)
+    {
+        var customer = await customerRepository.GetByIdAsync(customerId, ct);
+        if (customer is null) return null;
+
+        var entries = await BuildKhataEntriesAsync(customer, ct);
+        return new KhataBookDto(Map(customer), entries, customer.Balance);
+    }
+
     public async Task<CustomerHistoryDto?> GetHistoryAsync(Guid customerId, CancellationToken ct = default)
     {
         var customer = await customerRepository.GetByIdAsync(customerId, ct);
@@ -107,13 +135,21 @@ public class CustomerService(
     internal async Task<Customer> FindOrCreateAsync(string name, string mobile, CancellationToken ct = default)
     {
         var normalizedPhone = NormalizePhone(mobile);
-        var existing = await customerRepository.GetByPhoneAsync(normalizedPhone, ct);
+        var existing = await customerRepository.GetByNameAndPhoneAsync(name, normalizedPhone, ct);
 
         if (existing is not null)
         {
             existing.Name = name.Trim();
             existing.Phone = normalizedPhone;
             return await customerRepository.UpdateAsync(existing, ct);
+        }
+
+        var byPhone = await customerRepository.GetByPhoneAsync(normalizedPhone, ct);
+        if (byPhone is not null &&
+            NormalizeName(byPhone.Name) == NormalizeName(name))
+        {
+            byPhone.Phone = normalizedPhone;
+            return await customerRepository.UpdateAsync(byPhone, ct);
         }
 
         var customer = new Customer
@@ -129,6 +165,64 @@ public class CustomerService(
 
     internal static string NormalizePhone(string phone) =>
         new string(phone.Where(c => char.IsDigit(c) || c == '+').ToArray());
+
+    internal static string NormalizeName(string name) =>
+        name.Trim().ToLowerInvariant();
+
+    private async Task<IReadOnlyList<KhataEntryDto>> BuildKhataEntriesAsync(Customer customer, CancellationToken ct)
+    {
+        var sales = await GetSalesForCustomerAsync(customer, ct);
+        var payments = await GetPaymentsAsync(customer.Id, ct);
+
+        var events = new List<(DateTime Date, string Type, string Description, string? Ref, decimal Purchase, decimal Payment)>();
+
+        foreach (var sale in sales.OrderBy(s => s.TransactionDate))
+        {
+            events.Add((
+                sale.TransactionDate,
+                "Purchase",
+                $"Invoice {sale.SlipNumber}",
+                sale.SlipNumber,
+                sale.TotalAmount,
+                sale.AmountPaid));
+        }
+
+        foreach (var payment in payments.OrderBy(p => p.PaymentDate))
+        {
+            events.Add((
+                payment.PaymentDate,
+                "Payment",
+                payment.Notes ?? "Payment received",
+                payment.Id.ToString(),
+                0,
+                payment.Amount));
+        }
+
+        var sorted = events.OrderBy(e => e.Date).ThenBy(e => e.Type).ToList();
+        var running = 0m;
+        var entries = new List<KhataEntryDto>();
+
+        foreach (var e in sorted)
+        {
+            var previous = running;
+            if (e.Type == "Purchase")
+            {
+                running += e.Purchase - e.Payment;
+                entries.Add(new KhataEntryDto(
+                    e.Date, e.Type, e.Description, e.Ref,
+                    previous, e.Purchase, e.Payment, running));
+            }
+            else
+            {
+                running -= e.Payment;
+                entries.Add(new KhataEntryDto(
+                    e.Date, e.Type, e.Description, e.Ref,
+                    previous, 0, e.Payment, running));
+            }
+        }
+
+        return entries;
+    }
 
     private async Task<IReadOnlyList<SaleDto>> GetSalesForCustomerAsync(Customer customer, CancellationToken ct)
     {
@@ -155,6 +249,7 @@ public class CustomerService(
         t.TotalAmount,
         t.AmountPaid,
         t.BalanceDue,
+        t.PreviousBalance,
         t.TotalCost,
         t.TotalAmount - t.TotalCost,
         t.Notes,

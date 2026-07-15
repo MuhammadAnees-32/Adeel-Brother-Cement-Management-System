@@ -58,6 +58,7 @@ public class TransactionService(
             });
 
             product.StockQuantity -= itemRequest.Quantity;
+            product.TotalSold += itemRequest.Quantity;
             await productRepository.UpdateAsync(product, ct);
         }
 
@@ -72,6 +73,7 @@ public class TransactionService(
 
         var balanceDue = totalAmount - amountPaid;
         var customer = await customerService.FindOrCreateAsync(request.CustomerName, request.CustomerMobile, ct);
+        var previousBalance = customer.Balance;
         customer.Balance += balanceDue;
         await customerRepository.UpdateAsync(customer, ct);
 
@@ -88,12 +90,15 @@ public class TransactionService(
             TotalAmount = totalAmount,
             TotalCost = items.Sum(i => i.LineCost),
             AmountPaid = amountPaid,
-            BalanceDue = balanceDue
+            BalanceDue = balanceDue,
+            PreviousBalance = previousBalance
         };
 
         var created = await transactionRepository.CreateAsync(transaction, ct);
         return Map(created);
     }
+
+    public SaleDto MapSale(SaleTransaction t) => Map(t);
 
     private static SaleDto Map(SaleTransaction t) => new(
         t.Id,
@@ -105,6 +110,7 @@ public class TransactionService(
         t.TotalAmount,
         t.AmountPaid,
         t.BalanceDue,
+        t.PreviousBalance,
         t.TotalCost,
         t.TotalAmount - t.TotalCost,
         t.Notes,

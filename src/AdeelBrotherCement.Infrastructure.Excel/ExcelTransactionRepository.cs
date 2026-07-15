@@ -43,6 +43,7 @@ public class ExcelTransactionRepository(ExcelWorkbookManager workbookManager) : 
             txSheet.Cell(txRow, 9).Value = transaction.CustomerMobile;
             txSheet.Cell(txRow, 10).Value = transaction.AmountPaid;
             txSheet.Cell(txRow, 11).Value = transaction.BalanceDue;
+            txSheet.Cell(txRow, 12).Value = transaction.PreviousBalance;
 
             foreach (var item in transaction.Items)
             {
@@ -108,6 +109,9 @@ public class ExcelTransactionRepository(ExcelWorkbookManager workbookManager) : 
         var balanceDue = string.IsNullOrWhiteSpace(row.Cell(11).GetString())
             ? totalAmount - amountPaid
             : row.Cell(11).GetDecimal();
+        var previousBalance = string.IsNullOrWhiteSpace(row.Cell(12).GetString())
+            ? 0
+            : row.Cell(12).GetDecimal();
 
         var transaction = new SaleTransaction
         {
@@ -121,7 +125,8 @@ public class ExcelTransactionRepository(ExcelWorkbookManager workbookManager) : 
             Notes = row.Cell(8).GetString(),
             CustomerMobile = row.Cell(9).GetString(),
             AmountPaid = amountPaid,
-            BalanceDue = balanceDue
+            BalanceDue = balanceDue,
+            PreviousBalance = previousBalance
         };
 
         transaction.Items = allItems.Where(i => i.TransactionId == id).ToList();

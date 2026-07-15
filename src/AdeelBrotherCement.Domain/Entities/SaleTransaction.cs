@@ -12,6 +12,7 @@ public class SaleTransaction
     public decimal TotalCost { get; set; }
     public decimal AmountPaid { get; set; }
     public decimal BalanceDue { get; set; }
+    public decimal PreviousBalance { get; set; }
     public string? Notes { get; set; }
     public List<SaleItem> Items { get; set; } = [];
 }

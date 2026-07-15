@@ -6,7 +6,11 @@ const navItems: { to: string; label: string; icon: string; screen: AppScreen }[]
   { to: '/sale', label: 'New Sale', icon: '🧾', screen: 'NewSale' },
   { to: '/sales', label: 'Sales History', icon: '📋', screen: 'SalesHistory' },
   { to: '/customers', label: 'Customer Balance', icon: '👥', screen: 'CustomerBalance' },
+  { to: '/khata', label: 'Khata Book', icon: '📒', screen: 'KhataBook' },
   { to: '/inventory', label: 'Inventory', icon: '📦', screen: 'Inventory' },
+  { to: '/dealers', label: 'Dealers', icon: '🏭', screen: 'Dealers' },
+  { to: '/bookings', label: 'Bookings', icon: '📅', screen: 'AdvanceBookings' },
+  { to: '/reports', label: 'Reports', icon: '📈', screen: 'Reports' },
   { to: '/expenses', label: 'Expenses', icon: '💰', screen: 'Expenses' },
   { to: '/users', label: 'User Access', icon: '🔐', screen: 'UserManagement' },
 ];

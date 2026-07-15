@@ -6,6 +6,23 @@ import type {
   Customer,
   CustomerHistory,
   CustomerPayment,
+  CustomerLookup,
+  KhataBook,
+  Dealer,
+  DealerHistory,
+  DealerPurchase,
+  DealerPayment,
+  AdvanceBooking,
+  SyncStatus,
+  SyncResult,
+  SalesReport,
+  CustomerBalanceReport,
+  DealerOutstandingReport,
+  InventoryReport,
+  LowStockReport,
+  PurchaseReport,
+  ProfitReport,
+  AdvanceBookingReport,
   Dashboard,
   Expense,
   InventoryItem,
@@ -114,4 +131,49 @@ export const api = {
   getCustomerPayments: (id: string) => request<CustomerPayment[]>(`/customers/${id}/payments`),
   recordPayment: (id: string, data: RecordPaymentRequest) =>
     request<CustomerPayment>(`/customers/${id}/payments`, { method: 'POST', body: JSON.stringify(data) }),
+  searchCustomers: (q: string) => request<Customer[]>(`/customers/search?q=${encodeURIComponent(q)}`),
+  lookupCustomer: (name: string, mobile: string) =>
+    request<CustomerLookup>(`/customers/lookup?name=${encodeURIComponent(name)}&mobile=${encodeURIComponent(mobile)}`),
+  getKhataBook: (id: string) => request<KhataBook>(`/customers/${id}/khata`),
+  syncExcel: () => request<SyncResult>('/sync', { method: 'POST' }),
+  getSyncStatus: () => request<SyncStatus>('/sync/status'),
+  getDealers: () => request<Dealer[]>('/dealers'),
+  getDealerHistory: (id: string) => request<DealerHistory>(`/dealers/${id}/history`),
+  createDealer: (data: { name: string; phone?: string; address?: string }) =>
+    request<Dealer>('/dealers', { method: 'POST', body: JSON.stringify(data) }),
+  recordDealerPurchase: (data: {
+    dealerId: string; productId: string; quantity: number; unitPrice: number;
+    amountPaid?: number; purchaseDate?: string; notes?: string;
+  }) => request<DealerPurchase>('/dealers/purchases', { method: 'POST', body: JSON.stringify(data) }),
+  recordDealerPayment: (id: string, data: RecordPaymentRequest) =>
+    request<DealerPayment>(`/dealers/${id}/payments`, { method: 'POST', body: JSON.stringify(data) }),
+  getBookings: () => request<AdvanceBooking[]>('/bookings'),
+  createBooking: (data: {
+    customerName: string; customerMobile: string; productId: string;
+    quantity: number; unitPrice: number; advancePaid: number;
+    deliveryDate: string; notes?: string;
+  }) => request<AdvanceBooking>('/bookings', { method: 'POST', body: JSON.stringify(data) }),
+  deliverBooking: (id: string, amountPaid?: number) =>
+    request<Sale>(`/bookings/${id}/deliver`, {
+      method: 'POST',
+      body: JSON.stringify(amountPaid != null ? { amount: amountPaid } : {}),
+    }),
+  getDailySalesReport: (date?: string) =>
+    request<SalesReport>(`/reports/daily-sales${date ? `?date=${date}` : ''}`),
+  getMonthlySalesReport: (year?: number, month?: number) => {
+    const params = new URLSearchParams();
+    if (year) params.set('year', String(year));
+    if (month) params.set('month', String(month));
+    const q = params.toString();
+    return request<SalesReport>(`/reports/monthly-sales${q ? `?${q}` : ''}`);
+  },
+  getCustomerBalanceReport: () => request<CustomerBalanceReport>('/reports/customer-balances'),
+  getDealerOutstandingReport: () => request<DealerOutstandingReport>('/reports/dealer-outstanding'),
+  getInventoryReport: () => request<InventoryReport>('/reports/inventory'),
+  getLowStockReport: () => request<LowStockReport>('/reports/low-stock'),
+  getPurchaseReport: (from: string, to: string) =>
+    request<PurchaseReport>(`/reports/purchases?from=${from}&to=${to}`),
+  getProfitReport: (from: string, to: string) =>
+    request<ProfitReport>(`/reports/profit?from=${from}&to=${to}`),
+  getAdvanceBookingReport: () => request<AdvanceBookingReport>('/reports/advance-bookings'),
 };

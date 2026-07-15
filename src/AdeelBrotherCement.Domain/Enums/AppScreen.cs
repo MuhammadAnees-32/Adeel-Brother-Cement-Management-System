@@ -6,7 +6,11 @@ public enum AppScreen
     NewSale,
     SalesHistory,
     CustomerBalance,
+    KhataBook,
     Inventory,
+    Dealers,
+    AdvanceBookings,
+    Reports,
     Expenses,
     UserManagement
 }

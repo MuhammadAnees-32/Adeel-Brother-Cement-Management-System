@@ -13,7 +13,11 @@ public class UserService(IUserRepository userRepository)
         [AppScreen.NewSale] = "New Sale",
         [AppScreen.SalesHistory] = "Sales History",
         [AppScreen.CustomerBalance] = "Customer Balance",
+        [AppScreen.KhataBook] = "Khata Book",
         [AppScreen.Inventory] = "Inventory",
+        [AppScreen.Dealers] = "Dealers",
+        [AppScreen.AdvanceBookings] = "Advance Bookings",
+        [AppScreen.Reports] = "Reports",
         [AppScreen.Expenses] = "Expenses",
         [AppScreen.UserManagement] = "User Management"
     };

@@ -76,7 +76,11 @@ public class ExcelProductRepository(ExcelWorkbookManager workbookManager) : IPro
             PurchasePrice = row.Cell(5).GetDecimal(),
             SalePrice = row.Cell(6).GetDecimal(),
             StockQuantity = row.Cell(7).GetDecimal(),
-            IsActive = row.Cell(8).GetBoolean()
+            IsActive = row.Cell(8).GetBoolean(),
+            DealerId = Guid.TryParse(row.Cell(9).GetString(), out var dealerId) ? dealerId : null,
+            DealerName = row.Cell(10).GetString(),
+            TotalPurchased = row.Cell(11).GetString() == "" ? 0 : row.Cell(11).GetDecimal(),
+            TotalSold = row.Cell(12).GetString() == "" ? 0 : row.Cell(12).GetDecimal()
         };
     }
 
@@ -90,5 +94,9 @@ public class ExcelProductRepository(ExcelWorkbookManager workbookManager) : IPro
         sheet.Cell(row, 6).Value = product.SalePrice;
         sheet.Cell(row, 7).Value = product.StockQuantity;
         sheet.Cell(row, 8).Value = product.IsActive;
+        sheet.Cell(row, 9).Value = product.DealerId?.ToString() ?? "";
+        sheet.Cell(row, 10).Value = product.DealerName ?? "";
+        sheet.Cell(row, 11).Value = product.TotalPurchased;
+        sheet.Cell(row, 12).Value = product.TotalSold;
     }
 }

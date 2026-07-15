@@ -28,6 +28,32 @@ public class ExcelCustomerRepository(ExcelWorkbookManager workbookManager) : ICu
             NormalizePhone(c.Phone) == normalized);
     }
 
+    public async Task<Customer?> GetByNameAndPhoneAsync(string name, string phone, CancellationToken ct = default)
+    {
+        var normalizedName = NormalizeName(name);
+        var normalizedPhone = NormalizePhone(phone);
+        var customers = await GetAllAsync(ct);
+        return customers.FirstOrDefault(c =>
+            NormalizeName(c.Name) == normalizedName &&
+            !string.IsNullOrEmpty(c.Phone) &&
+            NormalizePhone(c.Phone) == normalizedPhone);
+    }
+
+    public async Task<IReadOnlyList<Customer>> SearchAsync(string query, CancellationToken ct = default)
+    {
+        var q = query.Trim().ToLowerInvariant();
+        if (string.IsNullOrEmpty(q)) return await GetAllAsync(ct);
+
+        var customers = await GetAllAsync(ct);
+        return customers
+            .Where(c =>
+                c.Name.ToLowerInvariant().Contains(q) ||
+                (c.Phone?.Contains(q) ?? false) ||
+                NormalizePhone(c.Phone ?? "").Contains(q.Replace("+", "")))
+            .OrderBy(c => c.Name)
+            .ToList();
+    }
+
     public Task<Customer> CreateAsync(Customer customer, CancellationToken ct = default) =>
         workbookManager.ExecuteAsync(workbook =>
         {
@@ -82,4 +108,7 @@ public class ExcelCustomerRepository(ExcelWorkbookManager workbookManager) : ICu
 
     private static string NormalizePhone(string phone) =>
         new string(phone.Where(c => char.IsDigit(c) || c == '+').ToArray());
+
+    private static string NormalizeName(string name) =>
+        name.Trim().ToLowerInvariant();
 }

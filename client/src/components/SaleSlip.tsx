@@ -40,18 +40,24 @@ export function SaleSlip({ sale }: SaleSlipProps) {
         </tbody>
       </table>
       <div className="sale-slip-totals">
+        {sale.previousBalance > 0 && (
+          <div className="sale-slip-total-row">
+            <span>Previous Balance</span>
+            <strong>{formatCurrency(sale.previousBalance)}</strong>
+          </div>
+        )}
         <div className="sale-slip-total-row">
-          <span>Total</span>
+          <span>Current Amount</span>
           <strong>{formatCurrency(sale.totalAmount)}</strong>
         </div>
         <div className="sale-slip-total-row">
-          <span>Paid</span>
+          <span>Paid Amount</span>
           <strong>{formatCurrency(sale.amountPaid)}</strong>
         </div>
         {sale.balanceDue > 0 && (
           <div className="sale-slip-total-row balance">
-            <span>Balance Due</span>
-            <strong>{formatCurrency(sale.balanceDue)}</strong>
+            <span>Remaining Balance</span>
+            <strong>{formatCurrency(sale.previousBalance + sale.balanceDue)}</strong>
           </div>
         )}
       </div>
@@ -111,8 +117,18 @@ function buildSaleSlipHtml(sale: Sale): string {
     sale.balanceDue > 0
       ? `
         <div class="sale-slip-total-row balance">
-          <span>Balance Due</span>
-          <strong>${escapeHtml(formatCurrency(sale.balanceDue))}</strong>
+          <span>Remaining Balance</span>
+          <strong>${escapeHtml(formatCurrency(sale.previousBalance + sale.balanceDue))}</strong>
+        </div>
+      `
+      : '';
+
+  const previousRow =
+    sale.previousBalance > 0
+      ? `
+        <div class="sale-slip-total-row">
+          <span>Previous Balance</span>
+          <strong>${escapeHtml(formatCurrency(sale.previousBalance))}</strong>
         </div>
       `
       : '';
@@ -153,12 +169,13 @@ function buildSaleSlipHtml(sale: Sale): string {
         <tbody>${itemRows}</tbody>
       </table>
       <div class="sale-slip-totals">
+        ${previousRow}
         <div class="sale-slip-total-row">
-          <span>Total</span>
+          <span>Current Amount</span>
           <strong>${escapeHtml(formatCurrency(sale.totalAmount))}</strong>
         </div>
         <div class="sale-slip-total-row">
-          <span>Paid</span>
+          <span>Paid Amount</span>
           <strong>${escapeHtml(formatCurrency(sale.amountPaid))}</strong>
         </div>
         ${balanceRow}

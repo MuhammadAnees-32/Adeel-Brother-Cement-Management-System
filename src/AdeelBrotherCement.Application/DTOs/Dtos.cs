@@ -8,7 +8,11 @@ public record ProductDto(
     decimal PurchasePrice,
     decimal SalePrice,
     decimal StockQuantity,
-    bool IsActive);
+    bool IsActive,
+    Guid? DealerId = null,
+    string? DealerName = null,
+    decimal TotalPurchased = 0,
+    decimal TotalSold = 0);
 
 public record UpdateProductRequest(
     decimal PurchasePrice,
@@ -21,7 +25,8 @@ public record CreateProductRequest(
     string Unit,
     decimal PurchasePrice,
     decimal SalePrice,
-    decimal StockQuantity);
+    decimal StockQuantity,
+    Guid? DealerId = null);
 
 public record CustomerDto(Guid Id, string Name, string? Phone, string? Address, decimal Balance);
 
@@ -72,6 +77,7 @@ public record SaleDto(
     decimal TotalAmount,
     decimal AmountPaid,
     decimal BalanceDue,
+    decimal PreviousBalance,
     decimal TotalCost,
     decimal TotalProfit,
     string? Notes,
@@ -91,7 +97,11 @@ public record InventoryItemDto(
     decimal StockQuantity,
     decimal PurchasePrice,
     decimal SalePrice,
-    decimal StockValue);
+    decimal StockValue,
+    string? DealerName = null,
+    decimal TotalPurchased = 0,
+    decimal TotalSold = 0,
+    decimal RemainingStock = 0);
 
 public record SalesSummaryDto(string Period, decimal TotalSales, decimal TotalCost, decimal TotalProfit, int TransactionCount);
 
@@ -112,3 +122,147 @@ public record DashboardDto(
     List<SalesSummaryDto> SalesByPeriod,
     List<ProductSalesDto> TopProducts,
     List<CustomerDto> CustomersWithBalance);
+
+public record CustomerLookupDto(
+    bool Exists,
+    CustomerDto? Customer,
+    string Message);
+
+public record KhataEntryDto(
+    DateTime Date,
+    string Type,
+    string Description,
+    string? Reference,
+    decimal PreviousBalance,
+    decimal PurchaseAmount,
+    decimal PaymentReceived,
+    decimal RemainingBalance);
+
+public record KhataBookDto(
+    CustomerDto Customer,
+    IReadOnlyList<KhataEntryDto> Entries,
+    decimal CurrentBalance);
+
+public record DealerDto(
+    Guid Id,
+    string Name,
+    string? Phone,
+    string? Address,
+    decimal OutstandingBalance);
+
+public record CreateDealerRequest(string Name, string? Phone, string? Address);
+
+public record DealerPurchaseDto(
+    Guid Id,
+    Guid DealerId,
+    string DealerName,
+    Guid ProductId,
+    string ProductName,
+    decimal Quantity,
+    decimal UnitPrice,
+    decimal TotalAmount,
+    decimal AmountPaid,
+    decimal BalanceDue,
+    DateTime PurchaseDate,
+    string? Notes);
+
+public record CreateDealerPurchaseRequest(
+    Guid DealerId,
+    Guid ProductId,
+    decimal Quantity,
+    decimal UnitPrice,
+    decimal? AmountPaid,
+    DateTime? PurchaseDate,
+    string? Notes);
+
+public record DealerPaymentDto(
+    Guid Id,
+    Guid DealerId,
+    string DealerName,
+    decimal Amount,
+    DateTime PaymentDate,
+    string? Notes);
+
+public record RecordDealerPaymentRequest(decimal Amount, DateTime? PaymentDate, string? Notes);
+
+public record DealerHistoryDto(
+    DealerDto Dealer,
+    IReadOnlyList<DealerPurchaseDto> Purchases,
+    IReadOnlyList<DealerPaymentDto> Payments);
+
+public record AdvanceBookingDto(
+    Guid Id,
+    Guid CustomerId,
+    string CustomerName,
+    string CustomerMobile,
+    Guid ProductId,
+    string ProductName,
+    decimal Quantity,
+    decimal UnitPrice,
+    decimal TotalAmount,
+    decimal AdvancePaid,
+    decimal RemainingAmount,
+    DateTime DeliveryDate,
+    DateTime BookedDate,
+    string Status,
+    Guid? InvoiceId,
+    string? Notes);
+
+public record CreateAdvanceBookingRequest(
+    string CustomerName,
+    string CustomerMobile,
+    Guid ProductId,
+    decimal Quantity,
+    decimal UnitPrice,
+    decimal AdvancePaid,
+    DateTime DeliveryDate,
+    string? Notes);
+
+public record ReportRequest(DateTime? From, DateTime? To);
+
+public record SalesReportDto(
+    string Title,
+    DateTime From,
+    DateTime To,
+    decimal TotalSales,
+    decimal TotalCost,
+    decimal TotalProfit,
+    int TransactionCount,
+    IReadOnlyList<SaleDto> Sales);
+
+public record CustomerBalanceReportDto(
+    IReadOnlyList<CustomerDto> Customers,
+    decimal TotalOutstanding);
+
+public record DealerOutstandingReportDto(
+    IReadOnlyList<DealerDto> Dealers,
+    decimal TotalOutstanding);
+
+public record InventoryReportDto(
+    IReadOnlyList<InventoryItemDto> Items,
+    decimal TotalStockValue);
+
+public record LowStockReportDto(
+    IReadOnlyList<InventoryItemDto> Items);
+
+public record PurchaseReportDto(
+    DateTime From,
+    DateTime To,
+    IReadOnlyList<DealerPurchaseDto> Purchases,
+    decimal TotalPurchases,
+    decimal TotalPaid,
+    decimal TotalOutstanding);
+
+public record ProfitReportDto(
+    DateTime From,
+    DateTime To,
+    decimal TotalSales,
+    decimal TotalCost,
+    decimal GrossProfit,
+    decimal TotalExpenses,
+    decimal NetProfit);
+
+public record AdvanceBookingReportDto(
+    IReadOnlyList<AdvanceBookingDto> Pending,
+    IReadOnlyList<AdvanceBookingDto> Delivered,
+    IReadOnlyList<AdvanceBookingDto> All);
