@@ -38,6 +38,7 @@ New-Item -ItemType Directory -Path $DeployDir -Force | Out-Null
 Get-ChildItem $StagingDir | Copy-Item -Destination $DeployDir -Recurse -Force
 
 $WwwRoot = Join-Path $DeployDir "wwwroot"
+if (Test-Path $WwwRoot) { Remove-Item $WwwRoot -Recurse -Force }
 New-Item -ItemType Directory -Path $WwwRoot -Force | Out-Null
 Copy-Item (Join-Path $ClientDir "dist\*") $WwwRoot -Recurse -Force
 
