@@ -42,6 +42,10 @@ if (Test-Path $WwwRoot) { Remove-Item $WwwRoot -Recurse -Force }
 New-Item -ItemType Directory -Path $WwwRoot -Force | Out-Null
 Copy-Item (Join-Path $ClientDir "dist\*") $WwwRoot -Recurse -Force
 
+$buildVersion = Get-Date -Format "yyyyMMddHHmmss"
+Set-Content -Path (Join-Path $WwwRoot "app-version.json") -Value "{ `"version`": `"$buildVersion`" }" -Encoding UTF8
+Write-Host "App version: $buildVersion" -ForegroundColor Green
+
 $DataDir = Join-Path $DeployDir "data"
 New-Item -ItemType Directory -Path $DataDir -Force | Out-Null
 if (Test-Path $DataBackup) {

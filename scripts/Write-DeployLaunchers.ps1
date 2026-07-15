@@ -7,7 +7,8 @@ $startPs1 = @'
 $ErrorActionPreference = "Stop"
 $appDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $exe = Join-Path $appDir "AdeelBrotherCement.Api.exe"
-$url = "http://localhost:5049"
+$cacheBust = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+$url = "http://localhost:5049/login?v=$cacheBust"
 
 $running = Get-Process -Name "AdeelBrotherCement.Api" -ErrorAction SilentlyContinue
 if (-not $running) {

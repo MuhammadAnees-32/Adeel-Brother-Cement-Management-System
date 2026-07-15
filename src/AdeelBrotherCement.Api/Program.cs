@@ -43,18 +43,49 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/api"))
+    {
+        context.Response.OnStarting(() =>
+        {
+            context.Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+            return Task.CompletedTask;
+        });
+    }
+
+    await next();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 var wwwroot = Path.Combine(app.Environment.ContentRootPath, "wwwroot");
 if (Directory.Exists(wwwroot))
 {
+    static void ApplyNoCache(HttpResponse response)
+    {
+        response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+        response.Headers.Pragma = "no-cache";
+        response.Headers.Expires = "0";
+    }
+
     var spaStaticFiles = new StaticFileOptions
     {
         OnPrepareResponse = ctx =>
         {
-            if (ctx.File.Name.Equals("index.html", StringComparison.OrdinalIgnoreCase))
-                ctx.Context.Response.Headers.CacheControl = "no-cache";
+            var path = ctx.Context.Request.Path.Value ?? string.Empty;
+
+            if (path.Contains("app-version.json", StringComparison.OrdinalIgnoreCase)
+                || ctx.File.Name.Equals("index.html", StringComparison.OrdinalIgnoreCase))
+            {
+                ApplyNoCache(ctx.Context.Response);
+                return;
+            }
+
+            if (path.StartsWith("/assets/", StringComparison.OrdinalIgnoreCase))
+                ctx.Context.Response.Headers.CacheControl = "public, max-age=31536000, immutable";
         }
     };
 
@@ -62,15 +93,33 @@ if (Directory.Exists(wwwroot))
     app.UseStaticFiles(spaStaticFiles);
 }
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/api"))
+    {
+        context.Response.OnStarting(() =>
+        {
+            context.Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+            return Task.CompletedTask;
+        });
+    }
+
+    await next();
+});
+
 app.MapControllers();
 
 if (Directory.Exists(wwwroot))
+{
     app.MapFallbackToFile("index.html", new StaticFileOptions
     {
         OnPrepareResponse = ctx =>
         {
-            ctx.Context.Response.Headers.CacheControl = "no-cache";
+            ctx.Context.Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+            ctx.Context.Response.Headers.Pragma = "no-cache";
+            ctx.Context.Response.Headers.Expires = "0";
         }
     });
+}
 
 app.Run();
