@@ -35,6 +35,13 @@ export interface Sale {
   totalProfit: number;
   notes?: string;
   items: SaleItem[];
+  loadingCharge?: number;
+  transportCharge?: number;
+  totalWeight?: number;
+  driverName?: string;
+  vehicleNumber?: string;
+  billTotal?: number;
+  grandTotal?: number;
 }
 
 export interface Expense {
@@ -102,6 +109,11 @@ export interface CreateSaleRequest {
   amountPaid?: number;
   notes?: string;
   items: { productId: string; quantity: number; unitPrice?: number }[];
+  loadingCharge?: number;
+  transportCharge?: number;
+  driverName?: string;
+  vehicleNumber?: string;
+  totalWeight?: number;
 }
 
 export interface Customer {

@@ -59,7 +59,12 @@ public record CreateSaleRequest(
     DateTime? TransactionDate,
     decimal? AmountPaid,
     string? Notes,
-    List<SaleItemRequest> Items);
+    List<SaleItemRequest> Items,
+    decimal LoadingCharge = 0,
+    decimal TransportCharge = 0,
+    string? DriverName = null,
+    string? VehicleNumber = null,
+    decimal? TotalWeight = null);
 
 public record SaleItemDto(
     Guid ProductId,
@@ -85,7 +90,15 @@ public record SaleDto(
     decimal TotalCost,
     decimal TotalProfit,
     string? Notes,
-    List<SaleItemDto> Items);
+    List<SaleItemDto> Items,
+    decimal LoadingCharge = 0,
+    decimal TransportCharge = 0,
+    decimal TotalWeight = 0,
+    string? DriverName = null,
+    string? VehicleNumber = null)
+{
+    public decimal BillTotal => TotalAmount + LoadingCharge + TransportCharge;
+}
 
 public record ExpenseDto(Guid Id, DateTime ExpenseDate, string Category, string Description, decimal Amount);
 

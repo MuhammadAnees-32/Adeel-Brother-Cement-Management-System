@@ -196,6 +196,11 @@ internal static class ExcelDataSeeder
         sheet.Cell(1, 10).Value = "AmountPaid";
         sheet.Cell(1, 11).Value = "BalanceDue";
         sheet.Cell(1, 12).Value = "PreviousBalance";
+        sheet.Cell(1, 13).Value = "LoadingCharge";
+        sheet.Cell(1, 14).Value = "TransportCharge";
+        sheet.Cell(1, 15).Value = "TotalWeight";
+        sheet.Cell(1, 16).Value = "DriverName";
+        sheet.Cell(1, 17).Value = "VehicleNumber";
         sheet.Row(1).Style.Font.Bold = true;
     }
 

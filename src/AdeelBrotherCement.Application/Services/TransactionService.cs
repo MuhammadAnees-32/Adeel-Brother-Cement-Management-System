@@ -69,19 +69,24 @@ public class TransactionService(
         }
 
         var totalAmount = items.Sum(i => i.LineTotal);
-        var amountPaid = request.AmountPaid ?? totalAmount;
+        var loadingCharge = Math.Max(0, request.LoadingCharge);
+        var transportCharge = Math.Max(0, request.TransportCharge);
+        var billTotal = totalAmount + loadingCharge + transportCharge;
+        var amountPaid = request.AmountPaid ?? billTotal;
 
         if (amountPaid < 0)
             throw new InvalidOperationException("Amount paid cannot be negative.");
 
-        if (amountPaid > totalAmount)
+        if (amountPaid > billTotal)
             throw new InvalidOperationException("Amount paid cannot exceed bill total.");
 
-        var balanceDue = totalAmount - amountPaid;
+        var balanceDue = billTotal - amountPaid;
         var customer = await customerService.FindOrCreateAsync(request.CustomerName, request.CustomerMobile, ct);
         var previousBalance = customer.Balance;
         customer.Balance += balanceDue;
         await customerRepository.UpdateAsync(customer, ct);
+
+        var totalWeight = request.TotalWeight ?? items.Sum(i => i.Quantity);
 
         var transaction = new SaleTransaction
         {
@@ -97,7 +102,12 @@ public class TransactionService(
             TotalCost = items.Sum(i => i.LineCost),
             AmountPaid = amountPaid,
             BalanceDue = balanceDue,
-            PreviousBalance = previousBalance
+            PreviousBalance = previousBalance,
+            LoadingCharge = loadingCharge,
+            TransportCharge = transportCharge,
+            TotalWeight = totalWeight,
+            DriverName = string.IsNullOrWhiteSpace(request.DriverName) ? null : request.DriverName.Trim(),
+            VehicleNumber = string.IsNullOrWhiteSpace(request.VehicleNumber) ? null : request.VehicleNumber.Trim()
         };
 
         var created = await transactionRepository.CreateAsync(transaction, ct);
@@ -135,5 +145,10 @@ public class TransactionService(
         t.Items.Select(i => new SaleItemDto(
             i.ProductId, i.ProductName, i.Quantity,
             i.UnitPrice, i.UnitCost, i.LineTotal, i.LineProfit,
-            units is not null && units.TryGetValue(i.ProductId, out var unit) ? unit : "")).ToList());
+            units is not null && units.TryGetValue(i.ProductId, out var unit) ? unit : "")).ToList(),
+        t.LoadingCharge,
+        t.TransportCharge,
+        t.TotalWeight,
+        t.DriverName,
+        t.VehicleNumber);
 }

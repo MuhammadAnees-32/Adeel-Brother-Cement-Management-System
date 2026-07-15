@@ -1,5 +1,5 @@
 import type { Sale } from '../types/api';
-import { formatCurrency, formatDate } from '../utils/format';
+import { formatCurrency, formatDateTime } from '../utils/format';
 
 interface SaleSlipProps {
   sale: Sale;
@@ -8,31 +8,31 @@ interface SaleSlipProps {
 const SHOP = {
   name: 'Adeel & Brother',
   subtitle: 'Cement & Sirya Agency',
-  address: 'Main Market, Your City',
-  phone: '03XX-XXXXXXX',
+  address: 'Main Market, Chakwal',
+  phone: '0300-0000000',
 };
-
-const LOADING_AMOUNT = 0;
-const TRANSPORT_AMOUNT = 0;
 
 function formatQty(value: number, unit?: string): string {
   const qty = Number.isInteger(value) ? String(value) : value.toFixed(2);
-  return unit ? `${qty}-${unit}` : qty;
+  return unit ? `${qty} ${unit}` : qty;
 }
 
 function slipTotals(sale: Sale) {
   const subTotal = sale.totalAmount;
   const previousBalance = sale.previousBalance;
-  const loading = LOADING_AMOUNT;
-  const transport = TRANSPORT_AMOUNT;
-  const grandTotal = subTotal + previousBalance + loading + transport;
+  const loading = sale.loadingCharge ?? 0;
+  const transport = sale.transportCharge ?? 0;
+  const billTotal = subTotal + loading + transport;
+  const grandTotal = billTotal;
   const payment = sale.amountPaid;
   const balance = previousBalance + sale.balanceDue;
-  const weightTotal = sale.items
-    .filter((item) => (item.unit ?? '').toLowerCase() === 'kg')
-    .reduce((sum, item) => sum + item.quantity, 0);
+  const weightTotal = (sale.totalWeight ?? 0) > 0
+    ? sale.totalWeight ?? 0
+    : sale.items
+        .filter((item) => (item.unit ?? '').toLowerCase() === 'kg')
+        .reduce((sum, item) => sum + item.quantity, 0);
 
-  return { subTotal, previousBalance, loading, transport, grandTotal, payment, balance, weightTotal };
+  return { subTotal, previousBalance, loading, transport, billTotal, grandTotal, payment, balance, weightTotal };
 }
 
 type SummaryRow = {
@@ -40,20 +40,32 @@ type SummaryRow = {
   label: string;
   urdu: string;
   highlight?: string;
+  hideWhenZero?: boolean;
 };
 
 const SUMMARY_ROWS: SummaryRow[] = [
-  { key: 'subTotal', label: 'Sub Total', urdu: '' },
-  { key: 'previousBalance', label: 'Previous Balance', urdu: 'پچھلا بقایا' },
+  { key: 'subTotal', label: 'Sub Total', urdu: 'ذیلی کل' },
+  { key: 'previousBalance', label: 'Previous Balance', urdu: 'پچھلا بقایا', hideWhenZero: true },
   { key: 'loading', label: 'Loading', urdu: 'مزدوری' },
   { key: 'transport', label: 'Transport', urdu: 'گاڑی خرچہ' },
-  { key: 'grandTotal', label: 'Grand Total', urdu: 'کُل رقم', highlight: 'grand' },
+  { key: 'grandTotal', label: 'Grand Total', urdu: 'کل رقم', highlight: 'grand' },
   { key: 'payment', label: 'Payment', urdu: 'ادا شدہ رقم' },
   { key: 'balance', label: 'Balance', urdu: 'بقایا رقم', highlight: 'balance' },
 ];
 
+function visibleSummaryRows(sale: Sale) {
+  const totals = slipTotals(sale);
+  return SUMMARY_ROWS.filter((row) => {
+    if (!row.hideWhenZero) return true;
+    return totals[row.key] !== 0;
+  });
+}
+
 export function SaleSlip({ sale }: SaleSlipProps) {
   const totals = slipTotals(sale);
+  const rows = visibleSummaryRows(sale);
+  const driver = sale.driverName?.trim() || '____________________';
+  const vehicle = sale.vehicleNumber?.trim() || '____________________';
 
   return (
     <div className="sale-slip">
@@ -65,12 +77,12 @@ export function SaleSlip({ sale }: SaleSlipProps) {
 
       <div className="sale-slip-head">
         <div><strong>Bill #:</strong> {sale.slipNumber}</div>
-        <div><strong>Date:</strong> {formatDate(sale.transactionDate)}</div>
+        <div><strong>Date:</strong> {formatDateTime(sale.transactionDate)}</div>
       </div>
 
       <div className="sale-slip-customer">
         <p><strong>Customer:</strong> {sale.customerName}</p>
-        <p><strong>Contact:</strong> {sale.customerMobile || '—'}</p>
+        <p><strong>Mobile:</strong> {sale.customerMobile || '—'}</p>
       </div>
 
       <table className="sale-slip-table">
@@ -85,7 +97,7 @@ export function SaleSlip({ sale }: SaleSlipProps) {
         </thead>
         <tbody>
           {sale.items.map((item, index) => (
-            <tr key={item.productId}>
+            <tr key={`${item.productId}-${index}`}>
               <td className="center">{index + 1}</td>
               <td>{item.productName}</td>
               <td className="num">{formatQty(item.quantity, item.unit)}</td>
@@ -96,29 +108,29 @@ export function SaleSlip({ sale }: SaleSlipProps) {
         </tbody>
       </table>
 
+      {totals.weightTotal > 0 && (
+        <p className="sale-slip-weight">
+          <strong>Total Weight / کل وزن:</strong> {totals.weightTotal.toFixed(2)} Kg
+        </p>
+      )}
+
       <table className="sale-slip-summary">
         <tbody>
-          {SUMMARY_ROWS.map((row) => (
+          {rows.map((row) => (
             <tr key={row.key} className={row.highlight ?? ''}>
               <td className="label">
                 {row.label}
                 {row.urdu && <span className="urdu">{row.urdu}</span>}
               </td>
-              <td className="amount">{formatCurrency(totals[row.key])}</td>
+              <td className="amount">{formatCurrency(totals[row.key] ?? 0)}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {totals.weightTotal > 0 && (
-        <p className="sale-slip-weight">
-          <strong>Total Weight:</strong> {totals.weightTotal.toFixed(2)} Kg
-        </p>
-      )}
-
       <div className="sale-slip-extra">
         <p><strong>Remarks:</strong> {sale.notes || '________________________________'}</p>
-        <p><strong>Driver:</strong> ____________________ <strong>Vehicle:</strong> ____________________</p>
+        <p><strong>Driver:</strong> {driver} <strong>Vehicle #:</strong> {vehicle}</p>
       </div>
 
       <p className="sale-slip-footer">
@@ -145,7 +157,7 @@ const PRINT_STYLES = `
     background: #fff;
   }
   .sale-slip {
-    max-width: 420px;
+    max-width: 320px;
     margin: 0 auto;
     font-size: 12px;
     line-height: 1.35;
@@ -159,18 +171,18 @@ const PRINT_STYLES = `
     margin-bottom: 8px;
   }
   .sale-slip-brand h2 {
-    font-size: 20px;
+    font-size: 18px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     margin-bottom: 2px;
   }
   .sale-slip-brand .subtitle {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
   }
   .sale-slip-brand .meta {
     margin-top: 4px;
-    font-size: 11px;
+    font-size: 10px;
     color: #333;
   }
   .sale-slip-head {
@@ -178,21 +190,21 @@ const PRINT_STYLES = `
     justify-content: space-between;
     gap: 8px;
     margin-bottom: 8px;
-    font-size: 12px;
+    font-size: 11px;
     border-bottom: 1px dashed #666;
     padding-bottom: 6px;
   }
   .sale-slip-head strong { font-weight: 700; }
   .sale-slip-customer {
     margin-bottom: 8px;
-    font-size: 12px;
+    font-size: 11px;
   }
   .sale-slip-customer p { margin-bottom: 2px; }
   .sale-slip-table {
     width: 100%;
     border-collapse: collapse;
     margin: 8px 0;
-    font-size: 11px;
+    font-size: 10px;
   }
   .sale-slip-table th,
   .sale-slip-table td {
@@ -213,7 +225,7 @@ const PRINT_STYLES = `
     width: 100%;
     border-collapse: collapse;
     margin-top: 8px;
-    font-size: 12px;
+    font-size: 11px;
   }
   .sale-slip-summary td {
     border: 1px solid #111;
@@ -226,7 +238,7 @@ const PRINT_STYLES = `
     width: 42%;
   }
   .sale-slip-summary tr.grand td {
-    font-size: 13px;
+    font-size: 12px;
     background: #f8f8f8;
   }
   .sale-slip-summary tr.balance td {
@@ -239,16 +251,16 @@ const PRINT_STYLES = `
     unicode-bidi: plaintext;
     display: inline-block;
     margin-left: 6px;
-    font-size: 13px;
+    font-size: 12px;
   }
   .sale-slip-weight {
     margin-top: 6px;
-    font-size: 11px;
+    font-size: 10px;
     text-align: right;
   }
   .sale-slip-extra {
     margin-top: 8px;
-    font-size: 11px;
+    font-size: 10px;
     border-top: 1px dashed #666;
     padding-top: 6px;
   }
@@ -256,7 +268,7 @@ const PRINT_STYLES = `
   .sale-slip-footer {
     margin-top: 10px;
     text-align: center;
-    font-size: 12px;
+    font-size: 11px;
     border-top: 2px solid #111;
     padding-top: 8px;
   }
@@ -267,8 +279,8 @@ const PRINT_STYLES = `
   }
   @media print {
     body { padding: 0; }
-    .sale-slip { border-width: 1px; max-width: none; }
-    @page { margin: 8mm; size: auto; }
+    .sale-slip { border-width: 1px; max-width: none; width: 80mm; }
+    @page { margin: 4mm; size: 80mm auto; }
   }
 `;
 
@@ -290,7 +302,7 @@ function buildItemRows(sale: Sale): string {
 
 function buildSummaryRows(sale: Sale): string {
   const totals = slipTotals(sale);
-  return SUMMARY_ROWS
+  return visibleSummaryRows(sale)
     .map(
       (row) => `
         <tr class="${row.highlight ?? ''}">
@@ -298,7 +310,7 @@ function buildSummaryRows(sale: Sale): string {
             ${row.label}
             ${row.urdu ? `<span class="urdu">${row.urdu}</span>` : ''}
           </td>
-          <td class="amount">${escapeHtml(formatCurrency(totals[row.key]))}</td>
+          <td class="amount">${escapeHtml(formatCurrency(totals[row.key] ?? 0))}</td>
         </tr>
       `,
     )
@@ -308,11 +320,13 @@ function buildSummaryRows(sale: Sale): string {
 function buildSaleSlipHtml(sale: Sale): string {
   const totals = slipTotals(sale);
   const weightRow = totals.weightTotal > 0
-    ? `<p class="sale-slip-weight"><strong>Total Weight:</strong> ${totals.weightTotal.toFixed(2)} Kg</p>`
+    ? `<p class="sale-slip-weight"><strong>Total Weight / کل وزن:</strong> ${totals.weightTotal.toFixed(2)} Kg</p>`
     : '';
   const remarks = sale.notes
     ? `<p><strong>Remarks:</strong> ${escapeHtml(sale.notes)}</p>`
     : '<p><strong>Remarks:</strong> ________________________________</p>';
+  const driver = sale.driverName?.trim() || '____________________';
+  const vehicle = sale.vehicleNumber?.trim() || '____________________';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -330,11 +344,11 @@ function buildSaleSlipHtml(sale: Sale): string {
       </div>
       <div class="sale-slip-head">
         <div><strong>Bill #:</strong> ${escapeHtml(sale.slipNumber)}</div>
-        <div><strong>Date:</strong> ${escapeHtml(formatDate(sale.transactionDate))}</div>
+        <div><strong>Date:</strong> ${escapeHtml(formatDateTime(sale.transactionDate))}</div>
       </div>
       <div class="sale-slip-customer">
         <p><strong>Customer:</strong> ${escapeHtml(sale.customerName)}</p>
-        <p><strong>Contact:</strong> ${escapeHtml(sale.customerMobile || '—')}</p>
+        <p><strong>Mobile:</strong> ${escapeHtml(sale.customerMobile || '—')}</p>
       </div>
       <table class="sale-slip-table">
         <thead>
@@ -348,13 +362,13 @@ function buildSaleSlipHtml(sale: Sale): string {
         </thead>
         <tbody>${buildItemRows(sale)}</tbody>
       </table>
+      ${weightRow}
       <table class="sale-slip-summary">
         <tbody>${buildSummaryRows(sale)}</tbody>
       </table>
-      ${weightRow}
       <div class="sale-slip-extra">
         ${remarks}
-        <p><strong>Driver:</strong> ____________________ <strong>Vehicle:</strong> ____________________</p>
+        <p><strong>Driver:</strong> ${escapeHtml(driver)} <strong>Vehicle #:</strong> ${escapeHtml(vehicle)}</p>
       </div>
       <p class="sale-slip-footer">
         <span class="urdu">بل کے بغیر مال واپس یا تبدیل نہیں ہو گا</span>

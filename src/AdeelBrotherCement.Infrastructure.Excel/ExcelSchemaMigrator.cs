@@ -57,6 +57,11 @@ internal static class ExcelSchemaMigrator
         EnsureHeader(sheet, 10, "AmountPaid");
         EnsureHeader(sheet, 11, "BalanceDue");
         EnsureHeader(sheet, 12, "PreviousBalance");
+        EnsureHeader(sheet, 13, "LoadingCharge");
+        EnsureHeader(sheet, 14, "TransportCharge");
+        EnsureHeader(sheet, 15, "TotalWeight");
+        EnsureHeader(sheet, 16, "DriverName");
+        EnsureHeader(sheet, 17, "VehicleNumber");
     }
 
     private static void EnsureUsersSheet(XLWorkbook workbook)

@@ -13,8 +13,15 @@ public class SaleTransaction
     public decimal AmountPaid { get; set; }
     public decimal BalanceDue { get; set; }
     public decimal PreviousBalance { get; set; }
+    public decimal LoadingCharge { get; set; }
+    public decimal TransportCharge { get; set; }
+    public decimal TotalWeight { get; set; }
+    public string? DriverName { get; set; }
+    public string? VehicleNumber { get; set; }
     public string? Notes { get; set; }
     public List<SaleItem> Items { get; set; } = [];
+
+    public decimal BillTotal => TotalAmount + LoadingCharge + TransportCharge;
 }
 
 public class SaleItem

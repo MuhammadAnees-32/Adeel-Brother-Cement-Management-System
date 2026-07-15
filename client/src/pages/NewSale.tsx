@@ -25,13 +25,18 @@ export function NewSalePage() {
   const [existingCustomerMsg, setExistingCustomerMsg] = useState('');
   const [previousBalance, setPreviousBalance] = useState(0);
   const [amountPaid, setAmountPaid] = useState<number | ''>('');
+  const [loadingCharge, setLoadingCharge] = useState<number | ''>('');
+  const [transportCharge, setTransportCharge] = useState<number | ''>('');
+  const [driverName, setDriverName] = useState('');
+  const [vehicleNumber, setVehicleNumber] = useState('');
+  const [totalWeight, setTotalWeight] = useState<number | ''>('');
   const [notes, setNotes] = useState('');
   const [saleDate, setSaleDate] = useState(toInputDate());
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [unitPrice, setUnitPrice] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [lastSale, setLastSale] = useState<Sale | null>(null);
 
@@ -127,19 +132,22 @@ export function NewSalePage() {
     setCart(cart.filter((c) => c.productId !== productId));
   };
 
-  const total = cart.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
-  const paid = amountPaid === '' ? total : amountPaid;
-  const balance = Math.max(0, total - paid);
+  const itemsSubtotal = cart.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+  const loadingAmt = loadingCharge === '' ? 0 : Math.max(0, loadingCharge);
+  const transportAmt = transportCharge === '' ? 0 : Math.max(0, transportCharge);
+  const billTotal = itemsSubtotal + loadingAmt + transportAmt;
+  const paid = amountPaid === '' ? billTotal : amountPaid;
+  const balance = Math.max(0, billTotal - paid);
 
   useEffect(() => {
     if (cart.length === 0) {
       setAmountPaid('');
     } else if (amountPaid === '') {
-      setAmountPaid(total);
-    } else if (typeof amountPaid === 'number' && amountPaid > total) {
-      setAmountPaid(total);
+      setAmountPaid(billTotal);
+    } else if (typeof amountPaid === 'number' && amountPaid > billTotal) {
+      setAmountPaid(billTotal);
     }
-  }, [total, cart.length]);
+  }, [billTotal, cart.length]);
 
   const submitSale = async () => {
     if (!customerName.trim()) {
@@ -158,20 +166,26 @@ export function NewSalePage() {
       setError('Sale rate cannot be negative');
       return;
     }
-    if (paid < 0 || paid > total) {
+    if (paid < 0 || paid > billTotal) {
       setError('Amount paid must be between 0 and bill total');
       return;
     }
 
-    setLoading(true);
+    setIsSubmitting(true);
     setError('');
     try {
+      const computedWeight = cart.reduce((sum, item) => sum + item.quantity, 0);
       const sale = await api.createSale({
         customerName: customerName.trim(),
         customerMobile: customerMobile.trim(),
         amountPaid: paid,
         transactionDate: new Date(saleDate).toISOString(),
         notes: notes || undefined,
+        loadingCharge: loadingAmt,
+        transportCharge: transportAmt,
+        driverName: driverName.trim() || undefined,
+        vehicleNumber: vehicleNumber.trim() || undefined,
+        totalWeight: totalWeight === '' ? computedWeight : totalWeight,
         items: cart.map((c) => ({
           productId: c.productId,
           quantity: c.quantity,
@@ -186,13 +200,18 @@ export function NewSalePage() {
       setPreviousBalance(0);
       setAmountPaid('');
       setNotes('');
+      setLoadingCharge('');
+      setTransportCharge('');
+      setDriverName('');
+      setVehicleNumber('');
+      setTotalWeight('');
       printSaleSlip(sale);
       const updated = await api.getProducts();
       setProducts(updated);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to create sale');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -265,8 +284,46 @@ export function NewSalePage() {
               <input type="date" value={saleDate} onChange={(e) => setSaleDate(e.target.value)} />
             </label>
             <label className="full-width">
-              Notes
-              <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional notes" />
+              Notes / Remarks
+              <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional remarks" />
+            </label>
+            <label>
+              Loading / مزدوری (PKR)
+              <input
+                type="number"
+                min={0}
+                value={loadingCharge === '' ? '' : loadingCharge}
+                onChange={(e) => setLoadingCharge(e.target.value === '' ? '' : Number(e.target.value))}
+                placeholder="0"
+              />
+            </label>
+            <label>
+              Transport / گاڑی (PKR)
+              <input
+                type="number"
+                min={0}
+                value={transportCharge === '' ? '' : transportCharge}
+                onChange={(e) => setTransportCharge(e.target.value === '' ? '' : Number(e.target.value))}
+                placeholder="0"
+              />
+            </label>
+            <label>
+              Driver Name
+              <input value={driverName} onChange={(e) => setDriverName(e.target.value)} placeholder="Driver name" />
+            </label>
+            <label>
+              Vehicle #
+              <input value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value)} placeholder="Vehicle number" />
+            </label>
+            <label>
+              Total Weight (Kg)
+              <input
+                type="number"
+                min={0}
+                value={totalWeight === '' ? '' : totalWeight}
+                onChange={(e) => setTotalWeight(e.target.value === '' ? '' : Number(e.target.value))}
+                placeholder="Optional"
+              />
             </label>
           </div>
 
@@ -339,12 +396,20 @@ export function NewSalePage() {
               </table>
               <div className="cart-footer payment-section">
                 <div className="payment-fields">
+                  <div className="payment-breakdown">
+                    <span>Items subtotal: {formatCurrency(itemsSubtotal)}</span>
+                    {(loadingAmt > 0 || transportAmt > 0) && (
+                      <span>
+                        Loading {formatCurrency(loadingAmt)} + Transport {formatCurrency(transportAmt)}
+                      </span>
+                    )}
+                  </div>
                   <label>
                     Amount Paid
                     <input
                       type="number"
                       min={0}
-                      max={total}
+                      max={billTotal}
                       value={amountPaid === '' ? '' : amountPaid}
                       onChange={(e) => setAmountPaid(e.target.value === '' ? '' : Number(e.target.value))}
                     />
@@ -366,12 +431,12 @@ export function NewSalePage() {
                   )}
                 </div>
                 <div className="cart-footer-actions">
-                  <strong>Grand Total: {formatCurrency(total)}</strong>
+                  <strong>Grand Total: {formatCurrency(billTotal)}</strong>
                   {error && (
                     <p className="cart-validation-error">{error}</p>
                   )}
-                  <button className="btn primary" onClick={submitSale} disabled={loading}>
-                    {loading ? 'Saving...' : 'Generate Slip & Save'}
+                  <button className="btn primary" onClick={submitSale} disabled={isSubmitting}>
+                    {isSubmitting ? 'Saving...' : 'Generate Slip & Save'}
                   </button>
                 </div>
               </div>

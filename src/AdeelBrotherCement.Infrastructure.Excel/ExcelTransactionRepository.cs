@@ -44,6 +44,11 @@ public class ExcelTransactionRepository(ExcelWorkbookManager workbookManager) : 
             txSheet.Cell(txRow, 10).Value = transaction.AmountPaid;
             txSheet.Cell(txRow, 11).Value = transaction.BalanceDue;
             txSheet.Cell(txRow, 12).Value = transaction.PreviousBalance;
+            txSheet.Cell(txRow, 13).Value = transaction.LoadingCharge;
+            txSheet.Cell(txRow, 14).Value = transaction.TransportCharge;
+            txSheet.Cell(txRow, 15).Value = transaction.TotalWeight;
+            txSheet.Cell(txRow, 16).Value = transaction.DriverName ?? "";
+            txSheet.Cell(txRow, 17).Value = transaction.VehicleNumber ?? "";
 
             foreach (var item in transaction.Items)
             {
@@ -112,6 +117,17 @@ public class ExcelTransactionRepository(ExcelWorkbookManager workbookManager) : 
         var previousBalance = string.IsNullOrWhiteSpace(row.Cell(12).GetString())
             ? 0
             : row.Cell(12).GetDecimal();
+        var loadingCharge = string.IsNullOrWhiteSpace(row.Cell(13).GetString())
+            ? 0
+            : row.Cell(13).GetDecimal();
+        var transportCharge = string.IsNullOrWhiteSpace(row.Cell(14).GetString())
+            ? 0
+            : row.Cell(14).GetDecimal();
+        var totalWeight = string.IsNullOrWhiteSpace(row.Cell(15).GetString())
+            ? 0
+            : row.Cell(15).GetDecimal();
+        var driverName = row.Cell(16).GetString();
+        var vehicleNumber = row.Cell(17).GetString();
 
         var transaction = new SaleTransaction
         {
@@ -126,7 +142,12 @@ public class ExcelTransactionRepository(ExcelWorkbookManager workbookManager) : 
             CustomerMobile = row.Cell(9).GetString(),
             AmountPaid = amountPaid,
             BalanceDue = balanceDue,
-            PreviousBalance = previousBalance
+            PreviousBalance = previousBalance,
+            LoadingCharge = loadingCharge,
+            TransportCharge = transportCharge,
+            TotalWeight = totalWeight,
+            DriverName = string.IsNullOrWhiteSpace(driverName) ? null : driverName,
+            VehicleNumber = string.IsNullOrWhiteSpace(vehicleNumber) ? null : vehicleNumber
         };
 
         transaction.Items = allItems.Where(i => i.TransactionId == id).ToList();
