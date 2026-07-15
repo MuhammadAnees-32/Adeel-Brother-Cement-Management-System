@@ -2,6 +2,7 @@ using System.Text;
 using AdeelBrotherCement.Application.Services;
 using AdeelBrotherCement.Infrastructure.Excel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,13 +49,28 @@ app.UseAuthorization();
 var wwwroot = Path.Combine(app.Environment.ContentRootPath, "wwwroot");
 if (Directory.Exists(wwwroot))
 {
+    var spaStaticFiles = new StaticFileOptions
+    {
+        OnPrepareResponse = ctx =>
+        {
+            if (ctx.File.Name.Equals("index.html", StringComparison.OrdinalIgnoreCase))
+                ctx.Context.Response.Headers.CacheControl = "no-cache";
+        }
+    };
+
     app.UseDefaultFiles();
-    app.UseStaticFiles();
+    app.UseStaticFiles(spaStaticFiles);
 }
 
 app.MapControllers();
 
 if (Directory.Exists(wwwroot))
-    app.MapFallbackToFile("index.html");
+    app.MapFallbackToFile("index.html", new StaticFileOptions
+    {
+        OnPrepareResponse = ctx =>
+        {
+            ctx.Context.Response.Headers.CacheControl = "no-cache";
+        }
+    });
 
 app.Run();

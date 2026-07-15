@@ -19,10 +19,17 @@ export function LoginPage() {
     setLoading(true);
     try {
       const response = await api.login({ username, password });
-      login({
+      sessionStorage.setItem('abc_auth', JSON.stringify({
+        token: response.token,
         username: response.username,
-        role: response.role as 'Admin' | 'Salesman',
-        allowedScreens: response.allowedScreens as AppScreen[],
+        role: response.role,
+        allowedScreens: response.allowedScreens,
+      }));
+      const me = await api.getMe();
+      login({
+        username: me.username,
+        role: me.role as 'Admin' | 'Salesman',
+        allowedScreens: me.allowedScreens as AppScreen[],
         token: response.token,
       });
     } catch (err) {

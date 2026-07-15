@@ -22,12 +22,12 @@ export function Layout() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <div className="brand">
+        <div className="sidebar-header brand">
           <h1>Adeel & Brother</h1>
           <p>Cement & Sirya Agency</p>
-          <p className="app-version">App v2 — Khata, Dealers, Bookings, Reports</p>
+          <p className="app-version">App v2 — scroll menu if needed</p>
         </div>
-        <nav>
+        <nav className="sidebar-nav" aria-label="Main navigation">
           {visibleItems.map((item) => (
             <NavLink
               key={item.to}
