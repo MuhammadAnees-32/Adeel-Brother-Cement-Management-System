@@ -25,7 +25,7 @@ export function Layout() {
         <div className="sidebar-header brand">
           <h1>Adeel & Brother</h1>
           <p>Cement & Sirya Agency</p>
-          <p className="app-version">App v2 — scroll menu if needed</p>
+          <p className="app-version">App v2 — Khata, Dealers, Bookings, Reports</p>
         </div>
         <nav className="sidebar-nav" aria-label="Main navigation">
           {visibleItems.map((item) => (
