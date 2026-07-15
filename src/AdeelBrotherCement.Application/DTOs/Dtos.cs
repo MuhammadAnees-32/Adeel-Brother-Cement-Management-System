@@ -284,3 +284,27 @@ public record AdvanceBookingReportDto(
     IReadOnlyList<AdvanceBookingDto> Pending,
     IReadOnlyList<AdvanceBookingDto> Delivered,
     IReadOnlyList<AdvanceBookingDto> All);
+
+public record ShopPurchaseDto(
+    Guid Id,
+    string ShopName,
+    string ItemName,
+    decimal Quantity,
+    string Unit,
+    decimal UnitPrice,
+    decimal TotalAmount,
+    decimal AmountPaid,
+    decimal BalanceDue,
+    DateTime PurchaseDate,
+    string? Notes,
+    string PaymentStatus);
+
+public record CreateShopPurchaseRequest(
+    string ShopName,
+    string ItemName,
+    decimal Quantity,
+    string? Unit,
+    decimal UnitPrice,
+    decimal? AmountPaid,
+    DateTime? PurchaseDate,
+    string? Notes);

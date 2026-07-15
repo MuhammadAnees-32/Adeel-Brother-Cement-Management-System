@@ -98,3 +98,10 @@ public interface IAdvanceBookingRepository
     Task<AdvanceBooking> CreateAsync(AdvanceBooking booking, CancellationToken ct = default);
     Task<AdvanceBooking> UpdateAsync(AdvanceBooking booking, CancellationToken ct = default);
 }
+
+public interface IShopPurchaseRepository
+{
+    Task<IReadOnlyList<ShopPurchase>> GetAllAsync(CancellationToken ct = default);
+    Task<ShopPurchase> CreateAsync(ShopPurchase purchase, CancellationToken ct = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+}

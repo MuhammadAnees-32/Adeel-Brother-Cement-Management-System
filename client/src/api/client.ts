@@ -23,6 +23,8 @@ import type {
   PurchaseReport,
   ProfitReport,
   AdvanceBookingReport,
+  ShopPurchase,
+  CreateShopPurchaseRequest,
   Dashboard,
   Expense,
   InventoryItem,
@@ -117,6 +119,11 @@ export const api = {
   createSale: (data: CreateSaleRequest) =>
     request<Sale>('/sales', { method: 'POST', body: JSON.stringify(data) }),
   getInventory: () => request<InventoryItem[]>('/inventory'),
+  getShopPurchases: () => request<ShopPurchase[]>('/inventory/shop-purchases'),
+  createShopPurchase: (data: CreateShopPurchaseRequest) =>
+    request<ShopPurchase>('/inventory/shop-purchases', { method: 'POST', body: JSON.stringify(data) }),
+  deleteShopPurchase: (id: string) =>
+    request<void>(`/inventory/shop-purchases/${id}`, { method: 'DELETE' }),
   adjustStock: (productId: string, quantity: number, reason: string) =>
     request<InventoryItem>(`/inventory/${productId}/adjust`, {
       method: 'POST',

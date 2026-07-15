@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
-import type { CreateProductRequest, Dealer, InventoryItem } from '../types/api';
-import { formatCurrency } from '../utils/format';
+import type { CreateProductRequest, CreateShopPurchaseRequest, Dealer, InventoryItem, ShopPurchase } from '../types/api';
+import { formatCurrency, formatDate, toInputDate } from '../utils/format';
 
 const CATEGORIES = ['Cement', 'Sirya', 'Taar', 'Keel'] as const;
 const UNIT_OPTIONS = ['Bag', 'Kg', 'Piece'] as const;
@@ -22,14 +22,34 @@ const emptyForm = (): CreateProductRequest => ({
   stockQuantity: 0,
 });
 
+const emptyPurchaseForm = (): CreateShopPurchaseRequest & { purchaseDate: string } => ({
+  shopName: '',
+  itemName: '',
+  quantity: 1,
+  unit: 'Bag',
+  unitPrice: 0,
+  amountPaid: 0,
+  purchaseDate: toInputDate(),
+  notes: '',
+});
+
+const PAYMENT_STATUS_LABEL: Record<ShopPurchase['paymentStatus'], string> = {
+  Paid: 'Paid / ادا',
+  Partial: 'Partial / جزوی',
+  Unpaid: 'Unpaid / باقی',
+};
+
 export function InventoryPage() {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [dealers, setDealers] = useState<Dealer[]>([]);
+  const [shopPurchases, setShopPurchases] = useState<ShopPurchase[]>([]);
+  const [activeTab, setActiveTab] = useState<'stock' | 'khata'>('stock');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showPurchaseForm, setShowPurchaseForm] = useState(false);
   const [editName, setEditName] = useState('');
   const [editUnit, setEditUnit] = useState('');
   const [editDealerId, setEditDealerId] = useState('');
@@ -38,13 +58,19 @@ export function InventoryPage() {
   const [salePrice, setSalePrice] = useState(0);
   const [reason, setReason] = useState('Stock update');
   const [newItem, setNewItem] = useState<CreateProductRequest>(emptyForm());
+  const [purchaseForm, setPurchaseForm] = useState(emptyPurchaseForm());
 
   const load = () => {
     setLoading(true);
-    Promise.all([api.getInventory(), api.getDealers().catch(() => [] as Dealer[])])
-      .then(([inventory, dealerList]) => {
+    Promise.all([
+      api.getInventory(),
+      api.getDealers().catch(() => [] as Dealer[]),
+      api.getShopPurchases().catch(() => [] as ShopPurchase[]),
+    ])
+      .then(([inventory, dealerList, purchases]) => {
         setItems(inventory);
         setDealers(dealerList);
+        setShopPurchases(purchases);
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
@@ -136,6 +162,53 @@ export function InventoryPage() {
     }
   };
 
+  const purchaseTotal = purchaseForm.quantity * purchaseForm.unitPrice;
+
+  const addShopPurchase = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!purchaseForm.shopName.trim() || !purchaseForm.itemName.trim()) {
+      setError('Shop name and item name are required');
+      return;
+    }
+    if (purchaseForm.quantity <= 0 || purchaseForm.unitPrice < 0) {
+      setError('Valid quantity and rate are required');
+      return;
+    }
+    try {
+      clearMessages();
+      await api.createShopPurchase({
+        shopName: purchaseForm.shopName.trim(),
+        itemName: purchaseForm.itemName.trim(),
+        quantity: purchaseForm.quantity,
+        unit: purchaseForm.unit,
+        unitPrice: purchaseForm.unitPrice,
+        amountPaid: purchaseForm.amountPaid ?? 0,
+        purchaseDate: new Date(purchaseForm.purchaseDate).toISOString(),
+        notes: purchaseForm.notes?.trim() || undefined,
+      });
+      setSuccess('Purchase recorded in khata');
+      setPurchaseForm(emptyPurchaseForm());
+      setShowPurchaseForm(false);
+      load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to record purchase');
+    }
+  };
+
+  const removeShopPurchase = async (purchase: ShopPurchase) => {
+    if (!confirm(`Remove purchase from "${purchase.shopName}"?`)) return;
+    try {
+      clearMessages();
+      await api.deleteShopPurchase(purchase.id);
+      setSuccess('Purchase entry removed');
+      load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to remove purchase');
+    }
+  };
+
+  const totalOutstanding = shopPurchases.reduce((sum, p) => sum + p.balanceDue, 0);
+
   const categories = [...new Set([...CATEGORIES, ...items.map((i) => i.category)])];
 
   if (loading) return <div className="page-loading">Loading inventory...</div>;
@@ -146,21 +219,48 @@ export function InventoryPage() {
         <div className="page-header-row">
           <div>
             <h2>Inventory Management</h2>
-            <p>Stock levels for Cement, Sirya, Taar & Keel</p>
+            <p>Stock levels & purchase khata / اسٹاک اور خریداری کھاتہ</p>
           </div>
-          <button
-            className="btn primary"
-            onClick={() => { setShowAddForm(!showAddForm); clearMessages(); }}
-          >
-            {showAddForm ? 'Cancel' : '+ Add Item'}
-          </button>
+          {activeTab === 'stock' && (
+            <button
+              className="btn primary"
+              onClick={() => { setShowAddForm(!showAddForm); clearMessages(); }}
+            >
+              {showAddForm ? 'Cancel' : '+ Add Item'}
+            </button>
+          )}
+          {activeTab === 'khata' && (
+            <button
+              className="btn primary"
+              onClick={() => { setShowPurchaseForm(!showPurchaseForm); clearMessages(); }}
+            >
+              {showPurchaseForm ? 'Cancel' : '+ Record Purchase'}
+            </button>
+          )}
         </div>
       </header>
+
+      <div className="tab-bar">
+        <button
+          className={`tab-btn ${activeTab === 'stock' ? 'active' : ''}`}
+          type="button"
+          onClick={() => { setActiveTab('stock'); clearMessages(); }}
+        >
+          Stock / اسٹاک
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'khata' ? 'active' : ''}`}
+          type="button"
+          onClick={() => { setActiveTab('khata'); clearMessages(); }}
+        >
+          Purchase Khata / خریداری کھاتہ
+        </button>
+      </div>
 
       {error && <div className="alert error">{error}</div>}
       {success && <div className="alert success">{success}</div>}
 
-      {showAddForm && (
+      {activeTab === 'stock' && showAddForm && (
         <section className="card">
           <h3>Add New Item</h3>
           <form onSubmit={addItem} className="form-grid">
@@ -236,7 +336,94 @@ export function InventoryPage() {
         </section>
       )}
 
-      {categories.map((category) => {
+      {activeTab === 'khata' && showPurchaseForm && (
+        <section className="card">
+          <h3>Record Shop Purchase / دکان سے خریداری</h3>
+          <form onSubmit={addShopPurchase} className="form-grid">
+            <label>
+              Date
+              <input
+                type="date"
+                value={purchaseForm.purchaseDate}
+                onChange={(e) => setPurchaseForm({ ...purchaseForm, purchaseDate: e.target.value })}
+              />
+            </label>
+            <label>
+              Shop / Supplier Name *
+              <input
+                value={purchaseForm.shopName}
+                onChange={(e) => setPurchaseForm({ ...purchaseForm, shopName: e.target.value })}
+                placeholder="e.g. Ali Cement Store"
+              />
+            </label>
+            <label>
+              Item Name *
+              <input
+                value={purchaseForm.itemName}
+                onChange={(e) => setPurchaseForm({ ...purchaseForm, itemName: e.target.value })}
+                placeholder="e.g. Maple Leaf Cement"
+              />
+            </label>
+            <label>
+              Quantity
+              <input
+                type="number"
+                min={0.01}
+                step="any"
+                value={purchaseForm.quantity || ''}
+                onChange={(e) => setPurchaseForm({ ...purchaseForm, quantity: Number(e.target.value) })}
+              />
+            </label>
+            <label>
+              Unit
+              <input
+                list="unit-options"
+                value={purchaseForm.unit ?? ''}
+                onChange={(e) => setPurchaseForm({ ...purchaseForm, unit: e.target.value })}
+                placeholder="Bag, Kg, Piece"
+              />
+            </label>
+            <label>
+              Rate (PKR)
+              <input
+                type="number"
+                min={0}
+                value={purchaseForm.unitPrice || ''}
+                onChange={(e) => setPurchaseForm({ ...purchaseForm, unitPrice: Number(e.target.value) })}
+              />
+            </label>
+            <label>
+              Amount Paid (PKR)
+              <input
+                type="number"
+                min={0}
+                max={purchaseTotal}
+                value={purchaseForm.amountPaid ?? ''}
+                onChange={(e) => setPurchaseForm({ ...purchaseForm, amountPaid: Number(e.target.value) })}
+              />
+            </label>
+            <label className="full-width">
+              Notes
+              <input
+                value={purchaseForm.notes ?? ''}
+                onChange={(e) => setPurchaseForm({ ...purchaseForm, notes: e.target.value })}
+                placeholder="Optional remarks"
+              />
+            </label>
+            <p className="full-width purchase-total-hint">
+              Total: <strong>{formatCurrency(purchaseTotal)}</strong>
+              {purchaseTotal > (purchaseForm.amountPaid ?? 0) && (
+                <> — Balance: <strong>{formatCurrency(purchaseTotal - (purchaseForm.amountPaid ?? 0))}</strong></>
+              )}
+            </p>
+            <div className="form-action">
+              <button className="btn primary" type="submit">Save to Khata</button>
+            </div>
+          </form>
+        </section>
+      )}
+
+      {activeTab === 'stock' && categories.map((category) => {
         const categoryItems = items.filter((i) => i.category === category);
         if (categoryItems.length === 0) return null;
 
@@ -346,6 +533,62 @@ export function InventoryPage() {
           </section>
         );
       })}
+
+      {activeTab === 'khata' && (
+        <section className="card">
+          <div className="page-header-row">
+            <h3>Purchase Khata / خریداری کھاتہ</h3>
+            {totalOutstanding > 0 && (
+              <span className="balance-due">
+                Total outstanding: <strong>{formatCurrency(totalOutstanding)}</strong>
+              </span>
+            )}
+          </div>
+          <p className="section-desc">Track items purchased from other shops — separate from customer khata.</p>
+          {shopPurchases.length === 0 ? (
+            <p className="empty-state">No purchases recorded yet</p>
+          ) : (
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Shop</th>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th>Rate</th>
+                  <th>Total</th>
+                  <th>Paid</th>
+                  <th>Balance</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {shopPurchases.map((p) => (
+                  <tr key={p.id}>
+                    <td>{formatDate(p.purchaseDate)}</td>
+                    <td>{p.shopName}</td>
+                    <td>{p.itemName}</td>
+                    <td>{p.quantity} {p.unit}</td>
+                    <td>{formatCurrency(p.unitPrice)}</td>
+                    <td>{formatCurrency(p.totalAmount)}</td>
+                    <td>{formatCurrency(p.amountPaid)}</td>
+                    <td>{p.balanceDue > 0 ? formatCurrency(p.balanceDue) : '—'}</td>
+                    <td>
+                      <span className={`status-badge status-${p.paymentStatus.toLowerCase()}`}>
+                        {PAYMENT_STATUS_LABEL[p.paymentStatus]}
+                      </span>
+                    </td>
+                    <td>
+                      <button className="btn small danger" type="button" onClick={() => removeShopPurchase(p)}>Remove</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
+      )}
 
       <datalist id="edit-unit-options">
         {UNIT_OPTIONS.map((u) => <option key={u} value={u} />)}

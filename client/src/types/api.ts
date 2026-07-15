@@ -380,3 +380,29 @@ export interface AdvanceBookingReport {
   delivered: AdvanceBooking[];
   all: AdvanceBooking[];
 }
+
+export interface ShopPurchase {
+  id: string;
+  shopName: string;
+  itemName: string;
+  quantity: number;
+  unit: string;
+  unitPrice: number;
+  totalAmount: number;
+  amountPaid: number;
+  balanceDue: number;
+  purchaseDate: string;
+  notes?: string;
+  paymentStatus: 'Paid' | 'Partial' | 'Unpaid';
+}
+
+export interface CreateShopPurchaseRequest {
+  shopName: string;
+  itemName: string;
+  quantity: number;
+  unit?: string;
+  unitPrice: number;
+  amountPaid?: number;
+  purchaseDate?: string;
+  notes?: string;
+}

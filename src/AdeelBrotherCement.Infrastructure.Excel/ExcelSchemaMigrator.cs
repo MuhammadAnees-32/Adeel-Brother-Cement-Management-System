@@ -18,6 +18,9 @@ internal static class ExcelSchemaMigrator
             ["Id", "CustomerId", "CustomerName", "CustomerMobile", "ProductId", "ProductName", "Quantity",
              "UnitPrice", "TotalAmount", "AdvancePaid", "RemainingAmount", "DeliveryDate", "BookedDate",
              "Status", "InvoiceId", "Notes"]);
+        EnsureSheet(workbook, "ShopPurchases",
+            ["Id", "ShopName", "ItemName", "Quantity", "Unit", "UnitPrice",
+             "TotalAmount", "AmountPaid", "BalanceDue", "PurchaseDate", "Notes"]);
         EnsureUsersSheet(workbook);
     }
 

@@ -6,7 +6,7 @@ import { SearchableSelect } from '../components/SearchableSelect';
 import type { Product, Sale } from '../types/api';
 import { formatCurrency, toInputDate } from '../utils/format';
 
-interface CartItem {
+interface BillItem {
   productId: string;
   productName: string;
   unit: string;
@@ -32,7 +32,7 @@ export function NewSalePage() {
   const [totalWeight, setTotalWeight] = useState<number | ''>('');
   const [notes, setNotes] = useState('');
   const [saleDate, setSaleDate] = useState(toInputDate());
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [billItems, setBillItems] = useState<BillItem[]>([]);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [unitPrice, setUnitPrice] = useState(0);
@@ -82,7 +82,7 @@ export function NewSalePage() {
     if (selectedProductData) setUnitPrice(selectedProductData.salePrice);
   }, [selectedProduct, selectedProductData?.salePrice]);
 
-  const addToCart = () => {
+  const addItemToBill = () => {
     const product = selectedProductData;
     if (!product) return;
     if (quantity <= 0) {
@@ -94,7 +94,7 @@ export function NewSalePage() {
       return;
     }
 
-    const existing = cart.find((c) => c.productId === product.id);
+    const existing = billItems.find((c) => c.productId === product.id);
     const totalQty = (existing?.quantity ?? 0) + quantity;
     if (totalQty > product.stockQuantity) {
       setError(`Only ${product.stockQuantity} ${product.unit} available for ${product.name}`);
@@ -103,13 +103,13 @@ export function NewSalePage() {
 
     setError('');
     if (existing) {
-      setCart(cart.map((c) =>
+      setBillItems(billItems.map((c) =>
         c.productId === product.id
           ? { ...c, quantity: totalQty, unitPrice }
           : c
       ));
     } else {
-      setCart([...cart, {
+      setBillItems([...billItems, {
         productId: product.id,
         productName: product.name,
         unit: product.unit,
@@ -119,20 +119,32 @@ export function NewSalePage() {
       }]);
     }
     setQuantity(1);
-    setUnitPrice(product.salePrice);
+    setSelectedProduct('');
+    setUnitPrice(0);
   };
 
-  const updateCartPrice = (productId: string, price: number) => {
-    setCart(cart.map((c) =>
+  const updateBillItemPrice = (productId: string, price: number) => {
+    setBillItems(billItems.map((c) =>
       c.productId === productId ? { ...c, unitPrice: Math.max(0, price) } : c
     ));
   };
 
-  const removeFromCart = (productId: string) => {
-    setCart(cart.filter((c) => c.productId !== productId));
+  const updateBillItemQty = (productId: string, qty: number) => {
+    const item = billItems.find((c) => c.productId === productId);
+    if (!item) return;
+    const product = products.find((p) => p.id === productId);
+    const maxQty = product?.stockQuantity ?? item.stock;
+    const newQty = Math.max(1, Math.min(qty, maxQty));
+    setBillItems(billItems.map((c) =>
+      c.productId === productId ? { ...c, quantity: newQty } : c
+    ));
   };
 
-  const itemsSubtotal = cart.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+  const removeBillItem = (productId: string) => {
+    setBillItems(billItems.filter((c) => c.productId !== productId));
+  };
+
+  const itemsSubtotal = billItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
   const loadingAmt = loadingCharge === '' ? 0 : Math.max(0, loadingCharge);
   const transportAmt = transportCharge === '' ? 0 : Math.max(0, transportCharge);
   const billTotal = itemsSubtotal + loadingAmt + transportAmt;
@@ -140,14 +152,14 @@ export function NewSalePage() {
   const balance = Math.max(0, billTotal - paid);
 
   useEffect(() => {
-    if (cart.length === 0) {
+    if (billItems.length === 0) {
       setAmountPaid('');
     } else if (amountPaid === '') {
       setAmountPaid(billTotal);
     } else if (typeof amountPaid === 'number' && amountPaid > billTotal) {
       setAmountPaid(billTotal);
     }
-  }, [billTotal, cart.length]);
+  }, [billTotal, billItems.length]);
 
   const submitSale = async () => {
     if (!customerName.trim()) {
@@ -158,11 +170,11 @@ export function NewSalePage() {
       setError('Mobile number is required');
       return;
     }
-    if (cart.length === 0) {
-      setError('Add at least one item');
+    if (billItems.length === 0) {
+      setError('Add at least one item to the bill');
       return;
     }
-    if (cart.some((c) => c.unitPrice < 0)) {
+    if (billItems.some((c) => c.unitPrice < 0)) {
       setError('Sale rate cannot be negative');
       return;
     }
@@ -174,7 +186,7 @@ export function NewSalePage() {
     setIsSubmitting(true);
     setError('');
     try {
-      const computedWeight = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const computedWeight = billItems.reduce((sum, item) => sum + item.quantity, 0);
       const sale = await api.createSale({
         customerName: customerName.trim(),
         customerMobile: customerMobile.trim(),
@@ -186,14 +198,14 @@ export function NewSalePage() {
         driverName: driverName.trim() || undefined,
         vehicleNumber: vehicleNumber.trim() || undefined,
         totalWeight: totalWeight === '' ? computedWeight : totalWeight,
-        items: cart.map((c) => ({
+        items: billItems.map((c) => ({
           productId: c.productId,
           quantity: c.quantity,
           unitPrice: c.unitPrice,
         })),
       });
       setLastSale(sale);
-      setCart([]);
+      setBillItems([]);
       setCustomerName('');
       setCustomerMobile('');
       setExistingCustomerMsg('');
@@ -326,9 +338,12 @@ export function NewSalePage() {
               />
             </label>
           </div>
+        </section>
 
-          <h3 className="section-title">Add Items</h3>
-          <div className="form-grid">
+        <section className="card">
+          <h3>Sale Bill / بل</h3>
+
+          <div className="form-grid bill-item-form">
             <label className="full-width">
               Product
               <SearchableSelect
@@ -340,7 +355,13 @@ export function NewSalePage() {
             </label>
             <label>
               Quantity
-              <input type="number" min={1} value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
+              <input
+                type="number"
+                min={1}
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addItemToBill())}
+              />
             </label>
             <label>
               Sale Rate (PKR)
@@ -349,6 +370,7 @@ export function NewSalePage() {
                 min={0}
                 value={unitPrice || ''}
                 onChange={(e) => setUnitPrice(Number(e.target.value))}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addItemToBill())}
               />
             </label>
             {selectedProductData && unitPrice !== selectedProductData.salePrice && (
@@ -357,15 +379,14 @@ export function NewSalePage() {
               </p>
             )}
             <div className="form-action">
-              <button className="btn" onClick={addToCart} type="button">Add to Cart</button>
+              <button className="btn" onClick={addItemToBill} type="button" disabled={!selectedProduct}>
+                Add to Bill / بل میں شامل
+              </button>
             </div>
           </div>
-        </section>
 
-        <section className="card">
-          <h3>Cart ({cart.length} items)</h3>
-          {cart.length === 0 ? (
-            <p className="empty-state">No items added yet</p>
+          {billItems.length === 0 ? (
+            <p className="empty-state">Select a product, enter qty & rate, then add to bill</p>
           ) : (
             <>
               <table className="data-table">
@@ -373,22 +394,32 @@ export function NewSalePage() {
                   <tr><th>Product</th><th>Qty</th><th>Rate</th><th>Total</th><th></th></tr>
                 </thead>
                 <tbody>
-                  {cart.map((item) => (
+                  {billItems.map((item) => (
                     <tr key={item.productId}>
                       <td>{item.productName}</td>
-                      <td>{item.quantity} {item.unit}</td>
+                      <td>
+                        <input
+                          type="number"
+                          className="input-sm"
+                          min={1}
+                          max={item.stock}
+                          value={item.quantity}
+                          onChange={(e) => updateBillItemQty(item.productId, Number(e.target.value))}
+                        />
+                        <span className="unit-label"> {item.unit}</span>
+                      </td>
                       <td>
                         <input
                           type="number"
                           className="input-sm input-rate"
                           min={0}
                           value={item.unitPrice || ''}
-                          onChange={(e) => updateCartPrice(item.productId, Number(e.target.value))}
+                          onChange={(e) => updateBillItemPrice(item.productId, Number(e.target.value))}
                         />
                       </td>
                       <td>{formatCurrency(item.quantity * item.unitPrice)}</td>
                       <td>
-                        <button className="btn-icon" onClick={() => removeFromCart(item.productId)}>✕</button>
+                        <button className="btn-icon" onClick={() => removeBillItem(item.productId)} type="button">✕</button>
                       </td>
                     </tr>
                   ))}
@@ -432,9 +463,6 @@ export function NewSalePage() {
                 </div>
                 <div className="cart-footer-actions">
                   <strong>Grand Total: {formatCurrency(billTotal)}</strong>
-                  {error && (
-                    <p className="cart-validation-error">{error}</p>
-                  )}
                   <button className="btn primary" onClick={submitSale} disabled={isSubmitting}>
                     {isSubmitting ? 'Saving...' : 'Generate Slip & Save'}
                   </button>

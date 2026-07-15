@@ -201,11 +201,34 @@ public class CustomersController(CustomerService customerService) : ControllerBa
 [Route("api/[controller]")]
 [Authorize]
 [RequireScreen(AppScreen.Inventory)]
-public class InventoryController(InventoryService inventoryService) : ControllerBase
+public class InventoryController(InventoryService inventoryService, ShopPurchaseService shopPurchaseService) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<InventoryItemDto>>> GetAll(CancellationToken ct)
         => Ok(await inventoryService.GetInventoryAsync(ct));
+
+    [HttpGet("shop-purchases")]
+    public async Task<ActionResult<IReadOnlyList<ShopPurchaseDto>>> GetShopPurchases(CancellationToken ct)
+        => Ok(await shopPurchaseService.GetAllAsync(ct));
+
+    [HttpPost("shop-purchases")]
+    public async Task<ActionResult<ShopPurchaseDto>> CreateShopPurchase(
+        [FromBody] CreateShopPurchaseRequest request, CancellationToken ct)
+    {
+        try
+        {
+            var purchase = await shopPurchaseService.CreateAsync(request, ct);
+            return Created(string.Empty, purchase);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpDelete("shop-purchases/{id:guid}")]
+    public async Task<IActionResult> DeleteShopPurchase(Guid id, CancellationToken ct)
+        => await shopPurchaseService.DeleteAsync(id, ct) ? NoContent() : NotFound();
 
     [HttpPost("{productId:guid}/adjust")]
     public async Task<ActionResult<InventoryItemDto>> Adjust(Guid productId, [FromBody] StockAdjustmentRequest request, CancellationToken ct)

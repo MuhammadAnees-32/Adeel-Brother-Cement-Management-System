@@ -75,6 +75,7 @@ internal static class ExcelDataSeeder
         CreateDealerPurchasesSheet(workbook);
         CreateDealerPaymentsSheet(workbook);
         CreateAdvanceBookingsSheet(workbook);
+        CreateShopPurchasesSheet(workbook);
         CreateUsersSheet(workbook);
         SeedDefaultUsers(workbook);
 
@@ -312,6 +313,23 @@ internal static class ExcelDataSeeder
         sheet.Cell(1, 14).Value = "Status";
         sheet.Cell(1, 15).Value = "InvoiceId";
         sheet.Cell(1, 16).Value = "Notes";
+        sheet.Row(1).Style.Font.Bold = true;
+    }
+
+    private static void CreateShopPurchasesSheet(XLWorkbook workbook)
+    {
+        var sheet = workbook.Worksheets.Add("ShopPurchases");
+        sheet.Cell(1, 1).Value = "Id";
+        sheet.Cell(1, 2).Value = "ShopName";
+        sheet.Cell(1, 3).Value = "ItemName";
+        sheet.Cell(1, 4).Value = "Quantity";
+        sheet.Cell(1, 5).Value = "Unit";
+        sheet.Cell(1, 6).Value = "UnitPrice";
+        sheet.Cell(1, 7).Value = "TotalAmount";
+        sheet.Cell(1, 8).Value = "AmountPaid";
+        sheet.Cell(1, 9).Value = "BalanceDue";
+        sheet.Cell(1, 10).Value = "PurchaseDate";
+        sheet.Cell(1, 11).Value = "Notes";
         sheet.Row(1).Style.Font.Bold = true;
     }
 
