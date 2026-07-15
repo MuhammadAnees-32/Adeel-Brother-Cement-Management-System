@@ -994,6 +994,13 @@ body {
   color: #b91c1c;
 }
 
+.cart-validation-error {
+  color: #b91c1c;
+  font-size: 0.9rem;
+  margin: 0.35rem 0;
+  font-weight: 600;
+}
+
 .total-balance {
   display: block;
   margin-top: 0.25rem;

@@ -45,6 +45,13 @@ export function NewSalePage() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!customerName.trim() || !customerMobile.trim()) {
+      setExistingCustomerMsg('');
+      setPreviousBalance(0);
+    }
+  }, [customerName, customerMobile]);
+
   const lookupCustomer = async (name: string, mobile: string) => {
     if (!name.trim() || !mobile.trim()) {
       setExistingCustomerMsg('');
@@ -175,8 +182,11 @@ export function NewSalePage() {
       setCart([]);
       setCustomerName('');
       setCustomerMobile('');
+      setExistingCustomerMsg('');
+      setPreviousBalance(0);
       setAmountPaid('');
       setNotes('');
+      printSaleSlip(sale);
       const updated = await api.getProducts();
       setProducts(updated);
     } catch (e) {
@@ -244,7 +254,7 @@ export function NewSalePage() {
                 required
               />
             </label>
-            {existingCustomerMsg && (
+            {existingCustomerMsg && customerName.trim() && customerMobile.trim() && (
               <p className={`full-width customer-lookup-msg ${previousBalance > 0 ? 'warning' : 'info'}`}>
                 {existingCustomerMsg}
                 {previousBalance > 0 && <> Previous balance: <strong>{formatCurrency(previousBalance)}</strong></>}
@@ -357,6 +367,9 @@ export function NewSalePage() {
                 </div>
                 <div className="cart-footer-actions">
                   <strong>Grand Total: {formatCurrency(total)}</strong>
+                  {error && (
+                    <p className="cart-validation-error">{error}</p>
+                  )}
                   <button className="btn primary" onClick={submitSale} disabled={loading}>
                     {loading ? 'Saving...' : 'Generate Slip & Save'}
                   </button>

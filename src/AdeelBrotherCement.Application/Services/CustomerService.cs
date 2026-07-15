@@ -40,7 +40,7 @@ public class CustomerService(
     public async Task<CustomerLookupDto> LookupAsync(string name, string mobile, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(mobile))
-            return new CustomerLookupDto(false, null, "Name and mobile are required.");
+            return new CustomerLookupDto(false, null, string.Empty);
 
         var existing = await customerRepository.GetByNameAndPhoneAsync(name, mobile, ct);
         if (existing is null)
