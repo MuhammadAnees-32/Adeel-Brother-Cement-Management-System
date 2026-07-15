@@ -25,6 +25,7 @@ export function Layout() {
         <div className="brand">
           <h1>Adeel & Brother</h1>
           <p>Cement & Sirya Agency</p>
+          <p className="app-version">App v2 — Khata, Dealers, Bookings, Reports</p>
         </div>
         <nav>
           {visibleItems.map((item) => (
