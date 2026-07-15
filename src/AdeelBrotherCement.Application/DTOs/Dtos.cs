@@ -15,6 +15,9 @@ public record ProductDto(
     decimal TotalSold = 0);
 
 public record UpdateProductRequest(
+    string Name,
+    string Unit,
+    Guid? DealerId,
     decimal PurchasePrice,
     decimal SalePrice,
     decimal StockQuantity);
@@ -65,7 +68,8 @@ public record SaleItemDto(
     decimal UnitPrice,
     decimal UnitCost,
     decimal LineTotal,
-    decimal LineProfit);
+    decimal LineProfit,
+    string Unit = "");
 
 public record SaleDto(
     Guid Id,
@@ -98,6 +102,7 @@ public record InventoryItemDto(
     decimal PurchasePrice,
     decimal SalePrice,
     decimal StockValue,
+    Guid? DealerId = null,
     string? DealerName = null,
     decimal TotalPurchased = 0,
     decimal TotalSold = 0,

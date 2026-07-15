@@ -13,13 +13,17 @@ public class TransactionService(
     public async Task<IReadOnlyList<SaleDto>> GetAllAsync(CancellationToken ct = default)
     {
         var transactions = await transactionRepository.GetAllAsync(ct);
-        return transactions.Select(Map).OrderByDescending(t => t.TransactionDate).ToList();
+        var units = await GetProductUnitsAsync(ct);
+        return transactions.Select(t => Map(t, units)).OrderByDescending(t => t.TransactionDate).ToList();
     }
 
     public async Task<SaleDto?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         var transaction = await transactionRepository.GetByIdAsync(id, ct);
-        return transaction is null ? null : Map(transaction);
+        if (transaction is null) return null;
+
+        var units = await GetProductUnitsAsync(ct);
+        return Map(transaction, units);
     }
 
     public async Task<SaleDto> CreateAsync(CreateSaleRequest request, CancellationToken ct = default)
@@ -36,6 +40,7 @@ public class TransactionService(
         var date = request.TransactionDate ?? DateTime.Now;
         var slipNumber = await transactionRepository.GetNextSlipNumberAsync(date, ct);
         var items = new List<SaleItem>();
+        var productUnits = new Dictionary<Guid, string>();
 
         foreach (var itemRequest in request.Items)
         {
@@ -57,6 +62,7 @@ public class TransactionService(
                 UnitCost = product.PurchasePrice
             });
 
+            productUnits[product.Id] = product.Unit;
             product.StockQuantity -= itemRequest.Quantity;
             product.TotalSold += itemRequest.Quantity;
             await productRepository.UpdateAsync(product, ct);
@@ -95,12 +101,24 @@ public class TransactionService(
         };
 
         var created = await transactionRepository.CreateAsync(transaction, ct);
-        return Map(created);
+        return Map(created, productUnits);
+    }
+
+    public async Task<SaleDto> MapSaleAsync(SaleTransaction t, CancellationToken ct = default)
+    {
+        var units = await GetProductUnitsAsync(ct);
+        return Map(t, units);
     }
 
     public SaleDto MapSale(SaleTransaction t) => Map(t);
 
-    private static SaleDto Map(SaleTransaction t) => new(
+    private async Task<IReadOnlyDictionary<Guid, string>> GetProductUnitsAsync(CancellationToken ct)
+    {
+        var products = await productRepository.GetAllAsync(ct);
+        return products.ToDictionary(p => p.Id, p => p.Unit);
+    }
+
+    private static SaleDto Map(SaleTransaction t, IReadOnlyDictionary<Guid, string>? units = null) => new(
         t.Id,
         t.SlipNumber,
         t.CustomerId,
@@ -116,5 +134,6 @@ public class TransactionService(
         t.Notes,
         t.Items.Select(i => new SaleItemDto(
             i.ProductId, i.ProductName, i.Quantity,
-            i.UnitPrice, i.UnitCost, i.LineTotal, i.LineProfit)).ToList());
+            i.UnitPrice, i.UnitCost, i.LineTotal, i.LineProfit,
+            units is not null && units.TryGetValue(i.ProductId, out var unit) ? unit : "")).ToList());
 }

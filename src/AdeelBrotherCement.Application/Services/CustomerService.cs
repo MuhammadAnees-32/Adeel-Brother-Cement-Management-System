@@ -7,7 +7,8 @@ namespace AdeelBrotherCement.Application.Services;
 public class CustomerService(
     ICustomerRepository customerRepository,
     ICustomerPaymentRepository paymentRepository,
-    ITransactionRepository transactionRepository)
+    ITransactionRepository transactionRepository,
+    IProductRepository productRepository)
 {
     public async Task<IReadOnlyList<CustomerDto>> GetAllAsync(CancellationToken ct = default)
     {
@@ -228,6 +229,7 @@ public class CustomerService(
     {
         var normalizedPhone = NormalizePhone(customer.Phone ?? "");
         var transactions = await transactionRepository.GetAllAsync(ct);
+        var units = (await productRepository.GetAllAsync(ct)).ToDictionary(p => p.Id, p => p.Unit);
 
         return transactions
             .Where(t =>
@@ -235,11 +237,11 @@ public class CustomerService(
                 (!string.IsNullOrEmpty(normalizedPhone) &&
                  NormalizePhone(t.CustomerMobile) == normalizedPhone))
             .OrderByDescending(t => t.TransactionDate)
-            .Select(MapSale)
+            .Select(t => MapSale(t, units))
             .ToList();
     }
 
-    private static SaleDto MapSale(SaleTransaction t) => new(
+    private static SaleDto MapSale(SaleTransaction t, IReadOnlyDictionary<Guid, string>? units = null) => new(
         t.Id,
         t.SlipNumber,
         t.CustomerId,
@@ -255,7 +257,8 @@ public class CustomerService(
         t.Notes,
         t.Items.Select(i => new SaleItemDto(
             i.ProductId, i.ProductName, i.Quantity,
-            i.UnitPrice, i.UnitCost, i.LineTotal, i.LineProfit)).ToList());
+            i.UnitPrice, i.UnitCost, i.LineTotal, i.LineProfit,
+            units is not null && units.TryGetValue(i.ProductId, out var unit) ? unit : "")).ToList());
 
     private static CustomerDto Map(Customer c) => new(c.Id, c.Name, c.Phone, c.Address, c.Balance);
 

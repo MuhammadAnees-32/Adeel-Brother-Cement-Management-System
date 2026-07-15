@@ -17,6 +17,7 @@ export interface SaleItem {
   unitCost: number;
   lineTotal: number;
   lineProfit: number;
+  unit?: string;
 }
 
 export interface Sale {
@@ -53,6 +54,7 @@ export interface InventoryItem {
   purchasePrice: number;
   salePrice: number;
   stockValue: number;
+  dealerId?: string;
   dealerName?: string;
   totalPurchased: number;
   totalSold: number;
@@ -142,6 +144,16 @@ export interface CreateProductRequest {
   category: string;
   name: string;
   unit: string;
+  purchasePrice: number;
+  salePrice: number;
+  stockQuantity: number;
+  dealerId?: string;
+}
+
+export interface UpdateProductRequest {
+  name: string;
+  unit: string;
+  dealerId?: string | null;
   purchasePrice: number;
   salePrice: number;
   stockQuantity: number;

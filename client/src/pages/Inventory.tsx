@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
-import type { CreateProductRequest, InventoryItem } from '../types/api';
+import type { CreateProductRequest, Dealer, InventoryItem } from '../types/api';
 import { formatCurrency } from '../utils/format';
 
 const CATEGORIES = ['Cement', 'Sirya', 'Taar', 'Keel'] as const;
+const UNIT_OPTIONS = ['Bag', 'Kg', 'Piece'] as const;
 
 const DEFAULT_UNITS: Record<string, string> = {
   Cement: 'Bag',
@@ -23,11 +24,15 @@ const emptyForm = (): CreateProductRequest => ({
 
 export function InventoryPage() {
   const [items, setItems] = useState<InventoryItem[]>([]);
+  const [dealers, setDealers] = useState<Dealer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editUnit, setEditUnit] = useState('');
+  const [editDealerId, setEditDealerId] = useState('');
   const [stockQty, setStockQty] = useState(0);
   const [purchasePrice, setPurchasePrice] = useState(0);
   const [salePrice, setSalePrice] = useState(0);
@@ -36,8 +41,11 @@ export function InventoryPage() {
 
   const load = () => {
     setLoading(true);
-    api.getInventory()
-      .then(setItems)
+    Promise.all([api.getInventory(), api.getDealers().catch(() => [] as Dealer[])])
+      .then(([inventory, dealerList]) => {
+        setItems(inventory);
+        setDealers(dealerList);
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   };
@@ -51,6 +59,9 @@ export function InventoryPage() {
 
   const startEdit = (item: InventoryItem) => {
     setEditingId(item.id);
+    setEditName(item.name);
+    setEditUnit(item.unit);
+    setEditDealerId(item.dealerId ?? '');
     setStockQty(item.stockQuantity);
     setPurchasePrice(item.purchasePrice);
     setSalePrice(item.salePrice);
@@ -59,11 +70,22 @@ export function InventoryPage() {
   };
 
   const saveStock = async (id: string) => {
+    if (!editName.trim()) {
+      setError('Product name is required');
+      return;
+    }
     try {
       clearMessages();
       await api.setStock(id, stockQty, reason);
-      await api.updateProduct(id, { purchasePrice, salePrice, stockQuantity: stockQty });
-      setSuccess('Stock updated successfully');
+      await api.updateProduct(id, {
+        name: editName.trim(),
+        unit: editUnit.trim() || 'Kg',
+        dealerId: editDealerId || null,
+        purchasePrice,
+        salePrice,
+        stockQuantity: stockQty,
+      });
+      setSuccess('Product updated successfully');
       setEditingId(null);
       load();
     } catch (e) {
@@ -159,10 +181,23 @@ export function InventoryPage() {
             <label>
               Unit
               <input
+                list="unit-options"
                 value={newItem.unit}
                 onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
                 placeholder="Bag, Kg, Piece"
               />
+            </label>
+            <label>
+              Dealer
+              <select
+                value={newItem.dealerId ?? ''}
+                onChange={(e) => setNewItem({ ...newItem, dealerId: e.target.value || undefined })}
+              >
+                <option value="">— No dealer —</option>
+                {dealers.map((d) => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
             </label>
             <label>
               Opening Stock
@@ -195,6 +230,9 @@ export function InventoryPage() {
               <button className="btn primary" type="submit">Add Item</button>
             </div>
           </form>
+          <datalist id="unit-options">
+            {UNIT_OPTIONS.map((u) => <option key={u} value={u} />)}
+          </datalist>
         </section>
       )}
 
@@ -223,14 +261,59 @@ export function InventoryPage() {
               <tbody>
                 {categoryItems.map((item) => (
                   <tr key={item.id} className={item.stockQuantity <= 10 ? 'low-stock' : ''}>
-                    <td>{item.name}</td>
                     {editingId === item.id ? (
                       <>
-                        <td>{item.dealerName || '—'}</td>
-                        <td><input type="number" className="input-sm" value={stockQty} onChange={(e) => setStockQty(Number(e.target.value))} /></td>
-                        <td>{item.unit}</td>
-                        <td><input type="number" className="input-sm" value={purchasePrice} onChange={(e) => setPurchasePrice(Number(e.target.value))} /></td>
-                        <td><input type="number" className="input-sm" value={salePrice} onChange={(e) => setSalePrice(Number(e.target.value))} /></td>
+                        <td>
+                          <input
+                            className="input-sm input-name"
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <select
+                            className="input-sm input-dealer"
+                            value={editDealerId}
+                            onChange={(e) => setEditDealerId(e.target.value)}
+                          >
+                            <option value="">— No dealer —</option>
+                            {dealers.map((d) => (
+                              <option key={d.id} value={d.id}>{d.name}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            className="input-sm"
+                            value={stockQty}
+                            onChange={(e) => setStockQty(Number(e.target.value))}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            list="edit-unit-options"
+                            className="input-sm"
+                            value={editUnit}
+                            onChange={(e) => setEditUnit(e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            className="input-sm"
+                            value={purchasePrice}
+                            onChange={(e) => setPurchasePrice(Number(e.target.value))}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            className="input-sm"
+                            value={salePrice}
+                            onChange={(e) => setSalePrice(Number(e.target.value))}
+                          />
+                        </td>
                         <td>{item.totalPurchased}</td>
                         <td>{item.totalSold}</td>
                         <td>{formatCurrency(stockQty * purchasePrice)}</td>
@@ -241,6 +324,7 @@ export function InventoryPage() {
                       </>
                     ) : (
                       <>
+                        <td>{item.name}</td>
                         <td>{item.dealerName || '—'}</td>
                         <td><strong>{item.stockQuantity}</strong></td>
                         <td>{item.unit}</td>
@@ -250,7 +334,7 @@ export function InventoryPage() {
                         <td>{item.totalSold}</td>
                         <td>{formatCurrency(item.stockValue)}</td>
                         <td className="actions">
-                          <button className="btn small" type="button" onClick={() => startEdit(item)}>Update</button>
+                          <button className="btn small" type="button" onClick={() => startEdit(item)}>Edit</button>
                           <button className="btn small danger" type="button" onClick={() => removeItem(item)}>Remove</button>
                         </td>
                       </>
@@ -262,6 +346,10 @@ export function InventoryPage() {
           </section>
         );
       })}
+
+      <datalist id="edit-unit-options">
+        {UNIT_OPTIONS.map((u) => <option key={u} value={u} />)}
+      </datalist>
     </div>
   );
 }

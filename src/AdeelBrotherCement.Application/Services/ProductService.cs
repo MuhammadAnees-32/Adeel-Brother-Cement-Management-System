@@ -7,7 +7,8 @@ namespace AdeelBrotherCement.Application.Services;
 
 public class ProductService(
     IProductRepository productRepository,
-    ITransactionRepository transactionRepository)
+    ITransactionRepository transactionRepository,
+    IDealerRepository dealerRepository)
 {
     public async Task<IReadOnlyList<ProductDto>> GetAllAsync(CancellationToken ct = default)
     {
@@ -38,6 +39,8 @@ public class ProductService(
             p.Name.Equals(request.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
             throw new InvalidOperationException($"Product '{request.Name}' already exists in {category}.");
 
+        var (dealerId, dealerName) = await ResolveDealerAsync(request.DealerId, ct);
+
         var product = new Product
         {
             Id = Guid.NewGuid(),
@@ -47,6 +50,8 @@ public class ProductService(
             PurchasePrice = request.PurchasePrice,
             SalePrice = request.SalePrice,
             StockQuantity = request.StockQuantity,
+            DealerId = dealerId,
+            DealerName = dealerName,
             IsActive = true
         };
 
@@ -56,9 +61,27 @@ public class ProductService(
 
     public async Task<ProductDto?> UpdateAsync(Guid id, UpdateProductRequest request, CancellationToken ct = default)
     {
+        if (string.IsNullOrWhiteSpace(request.Name))
+            throw new ArgumentException("Product name is required.");
+
         var product = await productRepository.GetByIdAsync(id, ct);
         if (product is null) return null;
 
+        var products = await productRepository.GetAllAsync(ct);
+        if (products.Any(p => p.IsActive &&
+            p.Id != id &&
+            p.Category == product.Category &&
+            p.Name.Equals(request.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
+            throw new InvalidOperationException($"Product '{request.Name}' already exists in {product.Category}.");
+
+        var (dealerId, dealerName) = await ResolveDealerAsync(request.DealerId, ct);
+
+        product.Name = request.Name.Trim();
+        product.Unit = string.IsNullOrWhiteSpace(request.Unit)
+            ? GetDefaultUnit(product.Category)
+            : request.Unit.Trim();
+        product.DealerId = dealerId;
+        product.DealerName = dealerName;
         product.PurchasePrice = request.PurchasePrice;
         product.SalePrice = request.SalePrice;
         product.StockQuantity = request.StockQuantity;
@@ -79,6 +102,17 @@ public class ProductService(
                 $"Cannot remove '{product.Name}' because it has sales history. Update stock to 0 instead.");
 
         return await productRepository.DeleteAsync(id, ct);
+    }
+
+    private async Task<(Guid? DealerId, string? DealerName)> ResolveDealerAsync(Guid? dealerId, CancellationToken ct)
+    {
+        if (dealerId is null)
+            return (null, null);
+
+        var dealer = await dealerRepository.GetByIdAsync(dealerId.Value, ct)
+            ?? throw new InvalidOperationException("Selected dealer was not found.");
+
+        return (dealer.Id, dealer.Name);
     }
 
     private static string GetDefaultUnit(ProductCategory category) => category switch

@@ -35,6 +35,7 @@ import type {
   RecordPaymentRequest,
   Sale,
   ScreenInfo,
+  UpdateProductRequest,
   UpdateUserRequest,
   UserAccount,
 } from '../types/api';
@@ -105,7 +106,7 @@ export const api = {
   getBackups: (limit = 10) => request<BackupInfo[]>(`/backup?limit=${limit}`),
   getProducts: (category?: string) =>
     request<Product[]>(category ? `/products?category=${category}` : '/products'),
-  updateProduct: (id: string, data: { purchasePrice: number; salePrice: number; stockQuantity: number }) =>
+  updateProduct: (id: string, data: UpdateProductRequest) =>
     request<Product>(`/products/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   createProduct: (data: CreateProductRequest) =>
     request<Product>('/products', { method: 'POST', body: JSON.stringify(data) }),

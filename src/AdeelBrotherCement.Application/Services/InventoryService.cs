@@ -19,6 +19,7 @@ public class InventoryService(IProductRepository productRepository, IStockReposi
                 p.PurchasePrice,
                 p.SalePrice,
                 p.StockQuantity * p.PurchasePrice,
+                p.DealerId,
                 p.DealerName,
                 p.TotalPurchased,
                 p.TotalSold,
@@ -54,5 +55,5 @@ public class InventoryService(IProductRepository productRepository, IStockReposi
         p.Id, p.Category.ToString(), p.Name, p.Unit,
         p.StockQuantity, p.PurchasePrice, p.SalePrice,
         p.StockQuantity * p.PurchasePrice,
-        p.DealerName, p.TotalPurchased, p.TotalSold, p.StockQuantity);
+        p.DealerId, p.DealerName, p.TotalPurchased, p.TotalSold, p.StockQuantity);
 }

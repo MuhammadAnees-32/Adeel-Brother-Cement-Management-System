@@ -48,8 +48,19 @@ public class ProductsController(ProductService productService) : ControllerBase
     [RequireScreen(AppScreen.Inventory)]
     public async Task<ActionResult<ProductDto>> Update(Guid id, [FromBody] UpdateProductRequest request, CancellationToken ct)
     {
-        var product = await productService.UpdateAsync(id, request, ct);
-        return product is null ? NotFound() : Ok(product);
+        try
+        {
+            var product = await productService.UpdateAsync(id, request, ct);
+            return product is null ? NotFound() : Ok(product);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPost]
@@ -295,14 +306,15 @@ public class SyncController(ISyncService syncService) : ControllerBase
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-[RequireScreen(AppScreen.Dealers)]
 public class DealersController(DealerService dealerService) : ControllerBase
 {
     [HttpGet]
+    [RequireScreen(AppScreen.Dealers, AppScreen.Inventory)]
     public async Task<ActionResult<IReadOnlyList<DealerDto>>> GetAll(CancellationToken ct)
         => Ok(await dealerService.GetAllAsync(ct));
 
     [HttpGet("{id:guid}")]
+    [RequireScreen(AppScreen.Dealers)]
     public async Task<ActionResult<DealerDto>> GetById(Guid id, CancellationToken ct)
     {
         var dealer = await dealerService.GetByIdAsync(id, ct);
@@ -310,6 +322,7 @@ public class DealersController(DealerService dealerService) : ControllerBase
     }
 
     [HttpGet("{id:guid}/history")]
+    [RequireScreen(AppScreen.Dealers)]
     public async Task<ActionResult<DealerHistoryDto>> GetHistory(Guid id, CancellationToken ct)
     {
         var history = await dealerService.GetHistoryAsync(id, ct);
@@ -317,6 +330,7 @@ public class DealersController(DealerService dealerService) : ControllerBase
     }
 
     [HttpPost]
+    [RequireScreen(AppScreen.Dealers)]
     public async Task<ActionResult<DealerDto>> Create([FromBody] CreateDealerRequest request, CancellationToken ct)
     {
         try
@@ -331,6 +345,7 @@ public class DealersController(DealerService dealerService) : ControllerBase
     }
 
     [HttpPost("purchases")]
+    [RequireScreen(AppScreen.Dealers)]
     public async Task<ActionResult<DealerPurchaseDto>> RecordPurchase(
         [FromBody] CreateDealerPurchaseRequest request, CancellationToken ct)
     {
@@ -346,6 +361,7 @@ public class DealersController(DealerService dealerService) : ControllerBase
     }
 
     [HttpPost("{id:guid}/payments")]
+    [RequireScreen(AppScreen.Dealers)]
     public async Task<ActionResult<DealerPaymentDto>> RecordPayment(
         Guid id, [FromBody] RecordDealerPaymentRequest request, CancellationToken ct)
     {
