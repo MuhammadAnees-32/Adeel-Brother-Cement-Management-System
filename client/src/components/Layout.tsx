@@ -23,8 +23,13 @@ export function Layout() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="sidebar-header brand">
-          <h1>Adeel & Brother</h1>
-          <p>Cement & Sirya Agency</p>
+          <div className="brand-row">
+            <img src="/logo.png" alt="Adeel and Brother" className="brand-logo" width={72} height={72} />
+            <div className="brand-text">
+              <h1>Adeel and Brothers</h1>
+              <p>Sarya and Cement Dealer</p>
+            </div>
+          </div>
           <p className="app-version">App v2 — Khata, Dealers, Bookings, Reports</p>
         </div>
         <nav className="sidebar-nav" aria-label="Main navigation">

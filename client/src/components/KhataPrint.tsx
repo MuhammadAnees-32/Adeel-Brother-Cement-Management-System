@@ -42,7 +42,7 @@ export function printKhataStatement(khata: KhataBook) {
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8" />
     <title>Khata - ${escapeHtml(khata.customer.name)}</title>
     <style>${A4_STYLES}</style></head><body>
-    <div class="header"><h1>Adeel &amp; Brother</h1><p>Cement &amp; Sirya Agency — Customer Khata Statement</p></div>
+    <div class="header"><h1>Adeel and Brothers</h1><p>Sarya and Cement Dealer — Customer Khata Statement</p></div>
     <div class="meta">
       <p><strong>Customer:</strong> ${escapeHtml(khata.customer.name)}</p>
       <p><strong>Mobile:</strong> ${escapeHtml(khata.customer.phone || '—')}</p>

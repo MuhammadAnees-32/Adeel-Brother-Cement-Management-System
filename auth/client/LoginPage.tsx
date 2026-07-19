@@ -43,8 +43,9 @@ export function LoginPage() {
     <div className="login-page">
       <form className="login-card" onSubmit={handleSubmit}>
         <div className="login-brand">
-          <h1>Adeel & Brother</h1>
-          <p>Cement & Sirya Agency</p>
+          <img src="/logo.png" alt="Adeel and Brother" className="login-logo" width={120} height={120} />
+          <h1>Adeel and Brothers</h1>
+          <p>Sarya and Cement Dealer</p>
         </div>
         <h2>Sign In</h2>
         {error && <div className="form-error">{error}</div>}

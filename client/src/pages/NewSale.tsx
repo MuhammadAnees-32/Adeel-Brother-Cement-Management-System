@@ -134,7 +134,7 @@ export function NewSalePage() {
     if (!item) return;
     const product = products.find((p) => p.id === productId);
     const maxQty = product?.stockQuantity ?? item.stock;
-    const newQty = Math.max(1, Math.min(qty, maxQty));
+    const newQty = Math.max(1, Math.min(qty || 1, maxQty));
     setBillItems(billItems.map((c) =>
       c.productId === productId ? { ...c, quantity: newQty } : c
     ));
@@ -338,12 +338,9 @@ export function NewSalePage() {
               />
             </label>
           </div>
-        </section>
 
-        <section className="card">
-          <h3>Sale Bill / بل</h3>
-
-          <div className="form-grid bill-item-form">
+          <div className="form-grid cart-add-section" id="cart-add-section">
+            <h4 className="cart-heading full-width">Add to Cart / کارٹ</h4>
             <label className="full-width">
               Product
               <SearchableSelect
@@ -374,21 +371,26 @@ export function NewSalePage() {
               />
             </label>
             {selectedProductData && unitPrice !== selectedProductData.salePrice && (
-              <p className="price-hint">
+              <p className="price-hint full-width">
                 List price: {formatCurrency(selectedProductData.salePrice)}
               </p>
             )}
             <div className="form-action">
               <button className="btn" onClick={addItemToBill} type="button" disabled={!selectedProduct}>
-                Add to Bill / بل میں شامل
+                Add to Cart / کارٹ میں شامل
               </button>
             </div>
           </div>
+        </section>
+
+        <section className="card">
+          <h3>Sale Bill / بل</h3>
 
           {billItems.length === 0 ? (
-            <p className="empty-state">Select a product, enter qty & rate, then add to bill</p>
+            <p className="empty-state">No items yet — add products from Customer Details (left)</p>
           ) : (
             <>
+              <h4 className="cart-heading">Cart ({billItems.length})</h4>
               <table className="data-table">
                 <thead>
                   <tr><th>Product</th><th>Qty</th><th>Rate</th><th>Total</th><th></th></tr>
@@ -419,12 +421,31 @@ export function NewSalePage() {
                       </td>
                       <td>{formatCurrency(item.quantity * item.unitPrice)}</td>
                       <td>
-                        <button className="btn-icon" onClick={() => removeBillItem(item.productId)} type="button">✕</button>
+                        <button className="btn-icon" onClick={() => removeBillItem(item.productId)} type="button" title="Remove">✕</button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            </>
+          )}
+
+          <button
+            type="button"
+            className="btn-add-more-item"
+            onClick={() => {
+              document.getElementById('cart-add-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              requestAnimationFrame(() => {
+                document.getElementById('cart-add-section')?.querySelector('input')?.focus();
+              });
+            }}
+            title="Add more item"
+          >
+            <span className="add-more-icon" aria-hidden>+</span>
+            <span>Add more item / مزید آئٹم</span>
+          </button>
+
+          {billItems.length > 0 && (
               <div className="cart-footer payment-section">
                 <div className="payment-fields">
                   <div className="payment-breakdown">
@@ -468,7 +489,6 @@ export function NewSalePage() {
                   </button>
                 </div>
               </div>
-            </>
           )}
         </section>
       </div>

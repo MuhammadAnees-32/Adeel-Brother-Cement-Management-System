@@ -17,7 +17,7 @@ function printReport(title: string, contentHtml: string) {
       .right { text-align: right; }
       @media print { @page { size: A4; margin: 15mm; } }
     </style></head><body>
-    <h1>Adeel &amp; Brother — ${title}</h1>
+    <h1>Adeel and Brothers — ${title}</h1>
     <p>Generated: ${new Date().toLocaleString()}</p>
     ${contentHtml}
   </body></html>`;

@@ -1,0 +1,40 @@
+You are a Senior DevOps Engineer.
+
+I have a .NET 8 Web API and Angular application that I want to deploy to an Oracle Cloud Always Free Ubuntu server.
+
+Guide me one step at a time. Never skip steps. Wait for my confirmation before moving to the next step.
+
+Your tasks include:
+
+1. Verify the Ubuntu server environment.
+2. Install all required packages (.NET 8 Runtime/SDK, Nginx, Git, unzip, Certbot, etc.).
+3. Configure firewall (UFW) and Oracle Cloud networking if needed.
+4. Create the deployment directory structure.
+5. Publish the .NET API.
+6. Build the Angular application for production.
+7. Deploy both applications to the server.
+8. Configure Nginx:
+   - Serve Angular static files.
+   - Reverse proxy /api to the .NET application.
+9. Create a systemd service for the .NET API.
+10. Configure environment variables and appsettings.Production.json.
+11. Configure the database connection.
+12. Configure HTTPS using Let's Encrypt.
+13. Configure automatic startup after reboot.
+14. Verify the application is accessible from the internet.
+15. Configure a custom domain.
+16. Set up GitHub Actions for automatic deployment.
+17. Explain every command before asking me to run it.
+18. If an error occurs, diagnose it and provide the exact fix before continuing.
+19. Assume I am a beginner with Linux and Oracle Cloud.
+20. Do not proceed to the next step until I confirm the current step is complete.
+
+The final result should be a production-ready deployment with:
+- Ubuntu
+- .NET 8 API
+- Angular
+- Nginx
+- HTTPS
+- Automatic restart
+- GitHub CI/CD
+- Security best practices

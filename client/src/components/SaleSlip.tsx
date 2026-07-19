@@ -6,10 +6,10 @@ interface SaleSlipProps {
 }
 
 const SHOP = {
-  name: 'Adeel & Brother',
-  subtitle: 'Cement & Sirya Agency',
-  address: 'Main Market, Chakwal',
-  phone: '0300-0000000',
+  name: 'Adeel and Brothers',
+  subtitle: 'Sarya and Cement Dealer',
+  address: 'Lari Adha Oghi',
+  phone: '03463850062, 03409258212',
 };
 
 function formatQty(value: number, unit?: string): string {
@@ -26,13 +26,8 @@ function slipTotals(sale: Sale) {
   const grandTotal = billTotal;
   const payment = sale.amountPaid;
   const balance = previousBalance + sale.balanceDue;
-  const weightTotal = (sale.totalWeight ?? 0) > 0
-    ? sale.totalWeight ?? 0
-    : sale.items
-        .filter((item) => (item.unit ?? '').toLowerCase() === 'kg')
-        .reduce((sum, item) => sum + item.quantity, 0);
 
-  return { subTotal, previousBalance, loading, transport, billTotal, grandTotal, payment, balance, weightTotal };
+  return { subTotal, previousBalance, loading, transport, billTotal, grandTotal, payment, balance };
 }
 
 type SummaryRow = {
@@ -108,12 +103,6 @@ export function SaleSlip({ sale }: SaleSlipProps) {
         </tbody>
       </table>
 
-      {totals.weightTotal > 0 && (
-        <p className="sale-slip-weight">
-          <strong>Total Weight / کل وزن:</strong> {totals.weightTotal.toFixed(2)} Kg
-        </p>
-      )}
-
       <table className="sale-slip-summary">
         <tbody>
           {rows.map((row) => (
@@ -150,137 +139,184 @@ function escapeHtml(value: string): string {
 
 const PRINT_STYLES = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-    color: #111;
-    padding: 8px;
+  html, body {
+    font-family: Arial, Helvetica, 'Segoe UI', Tahoma, sans-serif;
+    color: #000;
     background: #fff;
   }
   .sale-slip {
-    max-width: 320px;
+    max-width: 302px;
+    width: 302px;
     margin: 0 auto;
-    font-size: 12px;
-    line-height: 1.35;
-    border: 2px solid #111;
+    font-size: 13px;
+    line-height: 1.45;
+    border: 2px solid #000;
     padding: 10px;
+    color: #000;
   }
   .sale-slip-brand {
     text-align: center;
-    border-bottom: 2px solid #111;
+    border-bottom: 2px solid #000;
     padding-bottom: 8px;
     margin-bottom: 8px;
   }
   .sale-slip-brand h2 {
-    font-size: 18px;
-    letter-spacing: 0.5px;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0;
     text-transform: uppercase;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
+    color: #000;
   }
   .sale-slip-brand .subtitle {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
   }
   .sale-slip-brand .meta {
-    margin-top: 4px;
-    font-size: 10px;
-    color: #333;
+    margin-top: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #000;
   }
   .sale-slip-head {
     display: flex;
     justify-content: space-between;
     gap: 8px;
     margin-bottom: 8px;
-    font-size: 11px;
-    border-bottom: 1px dashed #666;
+    font-size: 12px;
+    font-weight: 600;
+    border-bottom: 1px solid #000;
     padding-bottom: 6px;
+    color: #000;
   }
-  .sale-slip-head strong { font-weight: 700; }
+  .sale-slip-head strong { font-weight: 800; }
   .sale-slip-customer {
     margin-bottom: 8px;
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #000;
   }
-  .sale-slip-customer p { margin-bottom: 2px; }
+  .sale-slip-customer p { margin-bottom: 3px; }
+  .sale-slip-customer strong { font-weight: 800; }
   .sale-slip-table {
     width: 100%;
     border-collapse: collapse;
     margin: 8px 0;
-    font-size: 10px;
+    font-size: 12px;
   }
   .sale-slip-table th,
   .sale-slip-table td {
-    border: 1px solid #111;
-    padding: 3px 4px;
+    border: 1px solid #000;
+    padding: 4px 5px;
     vertical-align: top;
+    color: #000;
   }
   .sale-slip-table th {
     text-align: center;
-    font-weight: 700;
-    background: #f5f5f5;
+    font-weight: 800;
+    background: #fff;
   }
   .sale-slip-table td.num,
-  .sale-slip-table th.num { text-align: right; }
+  .sale-slip-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .sale-slip-table td.center,
   .sale-slip-table th.center { text-align: center; }
   .sale-slip-summary {
     width: 100%;
     border-collapse: collapse;
     margin-top: 8px;
-    font-size: 11px;
+    font-size: 12px;
   }
   .sale-slip-summary td {
-    border: 1px solid #111;
-    padding: 4px 6px;
+    border: 1px solid #000;
+    padding: 5px 6px;
+    color: #000;
   }
-  .sale-slip-summary td.label { width: 58%; }
+  .sale-slip-summary td.label { width: 58%; font-weight: 600; }
   .sale-slip-summary td.amount {
     text-align: right;
-    font-weight: 700;
+    font-weight: 800;
     width: 42%;
+    font-variant-numeric: tabular-nums;
   }
   .sale-slip-summary tr.grand td {
-    font-size: 12px;
-    background: #f8f8f8;
+    font-size: 13px;
+    font-weight: 800;
+    background: #fff;
   }
   .sale-slip-summary tr.balance td {
-    color: #b91c1c;
-    font-weight: 700;
+    color: #000;
+    font-weight: 800;
   }
   .urdu {
-    font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif;
+    font-family: 'Noto Nastaliq Urdu', 'Urdu Typesetting', 'Jameel Noori Nastaleeq', Tahoma, serif;
     direction: rtl;
     unicode-bidi: plaintext;
     display: inline-block;
     margin-left: 6px;
-    font-size: 12px;
-  }
-  .sale-slip-weight {
-    margin-top: 6px;
-    font-size: 10px;
-    text-align: right;
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
   }
   .sale-slip-extra {
     margin-top: 8px;
-    font-size: 10px;
-    border-top: 1px dashed #666;
+    font-size: 11px;
+    font-weight: 600;
+    border-top: 1px solid #000;
     padding-top: 6px;
+    color: #000;
   }
-  .sale-slip-extra p { margin-bottom: 3px; }
+  .sale-slip-extra p { margin-bottom: 4px; }
+  .sale-slip-extra strong { font-weight: 800; }
   .sale-slip-footer {
     margin-top: 10px;
     text-align: center;
-    font-size: 11px;
-    border-top: 2px solid #111;
+    font-size: 12px;
+    border-top: 2px solid #000;
     padding-top: 8px;
+    color: #000;
   }
   .sale-slip-footer .urdu {
     display: block;
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.7;
+    font-size: 14px;
   }
   @media print {
-    body { padding: 0; }
-    .sale-slip { border-width: 1px; max-width: none; width: 80mm; }
-    @page { margin: 4mm; size: 80mm auto; }
+    html, body {
+      padding: 0;
+      margin: 0;
+      color: #000 !important;
+      -webkit-font-smoothing: none !important;
+      -moz-osx-font-smoothing: unset !important;
+      text-rendering: geometricPrecision;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .sale-slip {
+      border: 2px solid #000;
+      max-width: none;
+      width: 72mm;
+      font-size: 11pt;
+      line-height: 1.4;
+      padding: 2mm;
+    }
+    .sale-slip-brand h2 { font-size: 14pt; font-weight: 800; }
+    .sale-slip-brand .subtitle { font-size: 11pt; }
+    .sale-slip-brand .meta { font-size: 9pt; }
+    .sale-slip-head,
+    .sale-slip-customer { font-size: 10pt; }
+    .sale-slip-table { font-size: 10pt; }
+    .sale-slip-table th,
+    .sale-slip-table td { padding: 1.2mm 1.5mm; border-color: #000; }
+    .sale-slip-table th { background: #fff !important; }
+    .sale-slip-summary { font-size: 10pt; }
+    .sale-slip-summary tr.grand td { font-size: 11pt; background: #fff !important; }
+    .sale-slip-extra { font-size: 9pt; }
+    .sale-slip-footer { font-size: 10pt; }
+    .sale-slip-footer .urdu { font-size: 12pt; }
+    .urdu { font-size: 11pt; }
+    @page { margin: 2mm; size: 80mm auto; }
   }
 `;
 
@@ -318,10 +354,6 @@ function buildSummaryRows(sale: Sale): string {
 }
 
 function buildSaleSlipHtml(sale: Sale): string {
-  const totals = slipTotals(sale);
-  const weightRow = totals.weightTotal > 0
-    ? `<p class="sale-slip-weight"><strong>Total Weight / کل وزن:</strong> ${totals.weightTotal.toFixed(2)} Kg</p>`
-    : '';
   const remarks = sale.notes
     ? `<p><strong>Remarks:</strong> ${escapeHtml(sale.notes)}</p>`
     : '<p><strong>Remarks:</strong> ________________________________</p>';
@@ -333,6 +365,9 @@ function buildSaleSlipHtml(sale: Sale): string {
   <head>
     <meta charset="utf-8" />
     <title>Bill ${escapeHtml(sale.slipNumber)}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
     <style>${PRINT_STYLES}</style>
   </head>
   <body>
@@ -362,7 +397,6 @@ function buildSaleSlipHtml(sale: Sale): string {
         </thead>
         <tbody>${buildItemRows(sale)}</tbody>
       </table>
-      ${weightRow}
       <table class="sale-slip-summary">
         <tbody>${buildSummaryRows(sale)}</tbody>
       </table>
@@ -382,7 +416,7 @@ export function printSaleSlip(sale: Sale) {
   const iframe = document.createElement('iframe');
   iframe.setAttribute(
     'style',
-    'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden',
+    'position:fixed;left:-10000px;top:0;width:302px;height:800px;border:0;',
   );
   document.body.appendChild(iframe);
 
@@ -411,7 +445,8 @@ export function printSaleSlip(sale: Sale) {
 
   const triggerPrint = () => {
     printWindow.focus();
-    printWindow.print();
+    // Brief delay so fonts/layout render at full size before print (avoids blurry text)
+    setTimeout(() => printWindow.print(), 350);
   };
 
   if (doc.readyState === 'complete') {

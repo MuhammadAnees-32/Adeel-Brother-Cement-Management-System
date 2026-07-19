@@ -48,16 +48,34 @@ body {
   overflow: hidden;
 }
 
-.brand h1 {
-  font-size: 1.1rem;
-  color: #fff;
-  margin-bottom: 0.15rem;
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
 }
 
-.brand p {
-  font-size: 0.75rem;
-  opacity: 0.7;
-  margin-bottom: 0.35rem;
+.brand-logo {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #0f172a;
+}
+
+.brand-text h1 {
+  font-size: 1.05rem;
+  color: #fff;
+  margin-bottom: 0.1rem;
+  line-height: 1.2;
+}
+
+.brand-text p {
+  font-size: 0.72rem;
+  opacity: 0.75;
+  margin: 0;
+  line-height: 1.25;
 }
 
 .brand .app-version {
@@ -65,6 +83,21 @@ body {
   opacity: 0.55;
   margin-bottom: 1.25rem;
   line-height: 1.3;
+}
+
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.35rem;
+}
+
+.login-logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-bottom: 0.25rem;
 }
 
 .sidebar-header {
@@ -431,39 +464,44 @@ body {
 }
 
 .sale-slip {
-  max-width: 320px;
+  max-width: 302px;
   margin: 0 auto;
-  font-size: 0.8rem;
-  line-height: 1.35;
-  border: 2px solid #111;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  border: 2px solid #000;
   padding: 0.75rem;
   background: #fff;
+  color: #000;
+  font-family: Arial, Helvetica, 'Segoe UI', Tahoma, sans-serif;
 }
 
 .sale-slip-brand {
   text-align: center;
-  border-bottom: 2px solid #111;
+  border-bottom: 2px solid #000;
   padding-bottom: 0.5rem;
   margin-bottom: 0.5rem;
 }
 
 .sale-slip-brand h2 {
-  font-size: 1.15rem;
-  letter-spacing: 0.5px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0;
   text-transform: uppercase;
-  margin-bottom: 0.1rem;
+  margin-bottom: 0.15rem;
+  color: #000;
 }
 
 .sale-slip-brand .subtitle {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #000;
 }
 
 .sale-slip-brand .meta {
-  margin-top: 0.2rem;
-  font-size: 0.75rem;
-  color: var(--muted);
+  margin-top: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #000;
 }
 
 .sale-slip-head {
@@ -471,14 +509,18 @@ body {
   justify-content: space-between;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
-  font-size: 0.8rem;
-  border-bottom: 1px dashed #666;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-bottom: 1px solid #000;
   padding-bottom: 0.4rem;
+  color: #000;
 }
 
 .sale-slip-customer {
   margin-bottom: 0.5rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #000;
 }
 
 .sale-slip-customer p {
@@ -494,22 +536,24 @@ body {
 
 .sale-slip-table th,
 .sale-slip-table td {
-  border: 1px solid #111;
-  padding: 0.2rem 0.3rem;
+  border: 1px solid #000;
+  padding: 0.25rem 0.35rem;
   vertical-align: top;
+  color: #000;
 }
 
 .sale-slip-table th {
   text-align: center;
-  font-weight: 700;
-  background: #f5f5f5;
-  color: var(--text);
+  font-weight: 800;
+  background: #fff;
+  color: #000;
   text-transform: none;
 }
 
 .sale-slip-table td.num,
 .sale-slip-table th.num {
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .sale-slip-table td.center,
@@ -521,54 +565,56 @@ body {
   width: 100%;
   border-collapse: collapse;
   margin-top: 0.5rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
 
 .sale-slip-summary td {
-  border: 1px solid #111;
-  padding: 0.25rem 0.4rem;
+  border: 1px solid #000;
+  padding: 0.3rem 0.4rem;
+  color: #000;
 }
 
 .sale-slip-summary td.label {
   width: 58%;
+  font-weight: 600;
 }
 
 .sale-slip-summary td.amount {
   text-align: right;
-  font-weight: 700;
+  font-weight: 800;
   width: 42%;
+  font-variant-numeric: tabular-nums;
 }
 
 .sale-slip-summary tr.grand td {
-  font-size: 0.85rem;
-  background: #f8f8f8;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  background: #fff;
 }
 
 .sale-slip-summary tr.balance td {
-  color: var(--danger);
-  font-weight: 700;
+  color: #000;
+  font-weight: 800;
 }
 
 .sale-slip .urdu {
-  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif;
+  font-family: 'Noto Nastaliq Urdu', 'Urdu Typesetting', 'Jameel Noori Nastaleeq', Tahoma, serif;
   direction: rtl;
   unicode-bidi: plaintext;
   display: inline-block;
   margin-left: 0.35rem;
-  font-size: 0.9rem;
-}
-
-.sale-slip-weight {
-  margin-top: 0.35rem;
-  font-size: 0.75rem;
-  text-align: right;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #000;
 }
 
 .sale-slip-extra {
   margin-top: 0.5rem;
-  font-size: 0.75rem;
-  border-top: 1px dashed #666;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border-top: 1px solid #000;
   padding-top: 0.4rem;
+  color: #000;
 }
 
 .sale-slip-extra p {
@@ -578,16 +624,17 @@ body {
 .sale-slip-footer {
   margin-top: 0.6rem;
   text-align: center;
-  font-size: 0.8rem;
-  border-top: 2px solid #111;
+  font-size: 0.75rem;
+  border-top: 2px solid #000;
   padding-top: 0.5rem;
-  color: var(--text);
+  color: #000;
 }
 
 .sale-slip-footer .urdu {
   display: block;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.7;
+  font-size: 0.875rem;
 }
 
 .slip-number {
@@ -1195,6 +1242,53 @@ t {
   margin-bottom: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border);
+}
+
+.cart-add-section {
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--border);
+}
+
+.cart-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.btn-add-more-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0 1rem;
+  padding: 0.55rem 0.9rem;
+  border: 1.5px dashed var(--primary, #2563eb);
+  border-radius: var(--radius);
+  background: #eff6ff;
+  color: var(--primary, #2563eb);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-add-more-item:hover {
+  background: #dbeafe;
+}
+
+.add-more-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--primary, #2563eb);
+  color: #fff;
+  font-size: 1.15rem;
+  line-height: 1;
+  font-weight: 700;
 }
 
 .unit-label {
